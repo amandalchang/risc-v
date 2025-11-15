@@ -6,11 +6,11 @@
 
 module register_file(
     input clk,
-    input instra,
+    input [0:31] instra,
     input we3, // RegWrite from controller
-    input result, // Result from ALUOut
-    output rd1,
-    output rd2
+    input [0:31] result, // Result from ALUOut
+    output [0:31] rd1,
+    output [0:31] rd2
 );
 
 logic [0:31] reg_data [32];
