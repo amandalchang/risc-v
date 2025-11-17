@@ -31,7 +31,7 @@ always_comb begin
     a3 <= instr[11:7];  // Rd
 
     // write data
-    wd3 = result;
+    write_data_3 = result;
 
     // get read data using addresses
     rd1 <= reg_data[a1];
