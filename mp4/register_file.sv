@@ -1,7 +1,7 @@
 // Register file module
 
 // REFERENCES
-// fig 6.1 pg.303 harris and harris
+// table 6.1 pg.303 harris and harris
 // pg.395 harris and harris
 
 module register_file(
