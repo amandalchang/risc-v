@@ -6,7 +6,7 @@
 
 module register_file(
     input clk,
-    input [0:31] instra,
+    input [0:31] instr,
     input we3, // RegWrite from controller
     input [0:31] result, // Result from ALUOut
     output [0:31] rd1,
@@ -15,9 +15,9 @@ module register_file(
 
 logic [0:31] reg_data [32];
 
-logic [0:4] a1 = instra[19:15]; // Rs1
-logic [0:4] a2 = instra[24:20]; // Rs2
-logic [0:4] a3 = instra[11:7];  // Rd
+logic [0:4] a1 = instr[19:15]; // Rs1
+logic [0:4] a2 = instr[24:20]; // Rs2
+logic [0:4] a3 = instr[11:7];  // Rd
 
 // write data
 logic [0:31] wd3 = result;
@@ -26,9 +26,9 @@ logic [0:31] rd1 = reg_data[a1];
 logic [0:31] rd2 = reg_data[a2];
 
 always_comb begin
-    a1 <= instra[19:15]; // Rs1
-    a2 <= instra[24:20]; // Rs2
-    a3 <= instra[11:7];  // Rd
+    a1 <= instr[19:15]; // Rs1
+    a2 <= instr[24:20]; // Rs2
+    a3 <= instr[11:7];  // Rd
 
     // write data
     wd3 = result;
