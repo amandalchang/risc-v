@@ -7,7 +7,7 @@
 module register_file(
     input clk,
     input [0:31] instr,
-    input we3, // RegWrite from controller
+    input write_en_3, // RegWrite from controller
     input [0:31] result, // Result from ALUOut
     output [0:31] rd1,
     output [0:31] rd2
@@ -20,7 +20,7 @@ logic [0:4] a2 = instr[24:20]; // Rs2
 logic [0:4] a3 = instr[11:7];  // Rd
 
 // write data
-logic [0:31] wd3 = result;
+logic [0:31] write_data_3 = result;
 
 logic [0:31] rd1 = reg_data[a1];
 logic [0:31] rd2 = reg_data[a2];
@@ -40,8 +40,8 @@ end
 
 // we3 high: write wd3 data into a3 destination
 always_ff @(posedge clk) (
-    if (we3) begin
-        reg_data[a3] <= wd3;
+    if (write_en_3) begin
+        reg_data[a3] <= write_data_3;
     end
 );
 
