@@ -1,4 +1,7 @@
 `include "memory.sv"
+`include "immextend.sv"
+`include "register_file.sv"
+`include "control.sv"
 
 module top (
     input logic clk, 
@@ -7,16 +10,15 @@ module top (
     output logic RGB_G, 
     output logic RGB_B
 );
+    localparam [31:0] pc_next = 32'h1000;
+    localparam [31:0] pc; // beginning of imem addresses
+    localparam [31:0] old_pc = 32'h0;
+    localparam [31:0] store_instr = 32'h0;
+    localparam [31:0] store_data = 32'h0;
+    localparam [31:0] rd1_data = 32'h0;
+    localparam [31:0] rd2_data = 32'h0;
+    localparam [31:0] alu_reg = 32'h0;
 
-    localparam [3:0] INIT       = 4'd0;
-    localparam [3:0] RED        = 4'd1;
-    localparam [3:0] YELLOW     = 4'd2;
-    localparam [3:0] GREEN      = 4'd3;
-    localparam [3:0] CYAN       = 4'd4;
-    localparam [3:0] BLUE       = 4'd5;
-    localparam [3:0] MAGENTA    = 4'd6;
-
-    localparam [21:0] STATE_DWELL_CYCLES = 22'd3000000;
 
     logic [2:0] funct3 = 3'b010;
     logic dmem_wren = 1'b0;
@@ -32,83 +34,53 @@ module top (
     logic green;
     logic blue;
 
-    logic [3:0] state = INIT;
-    logic [21:0] count = 22'd0;
+    // always_ff @(negedge clk) begin
+    //     pc <= pc + 1;
+    // end
 
-    always_ff @(negedge clk) begin
-        imem_address <= imem_address + 1;
-    end
+    always_ff @(posedge clk) begin
+        pc <= pc_next;
 
-    always_ff @(negedge clk) begin
-        case (state)
-            INIT: begin
-                dmem_address <= 32'hFFFFFFFC;
-                dmem_data_in <= 32'hFFFF0000;
-                dmem_wren <= 1'b1;
-                count <= STATE_DWELL_CYCLES;
-                state <= RED;
-            end
-            RED: begin
-                if (count > 22'd0) begin
-                    count <= count - 1;
-                end
-                else begin
-                    dmem_data_in <= 32'hFFFFFF00;
-                    count <= STATE_DWELL_CYCLES;
-                    state <= YELLOW;
-                end
-            end
-            YELLOW: begin
-                if (count > 22'd0) begin
-                    count <= count - 1;
-                end
-                else begin
-                    dmem_data_in <= 32'hFF00FF00;
-                    count <= STATE_DWELL_CYCLES;
-                    state <= GREEN;
-                end
-            end
-            GREEN: begin
-                if (count > 22'd0) begin
-                    count <= count - 1;
-                end
-                else begin
-                    dmem_data_in <= 32'h0000FFFF;
-                    count <= STATE_DWELL_CYCLES;
-                    state <= CYAN;
-                end
-            end
-            CYAN: begin
-                if (count > 22'd0) begin
-                    count <= count - 1;
-                end
-                else begin
-                    dmem_data_in <= 32'h000000FF;
-                    count <= STATE_DWELL_CYCLES;
-                    state <= BLUE;
-                end
-            end
-            BLUE: begin
-                if (count > 22'd0) begin
-                    count <= count - 1;
-                end
-                else begin
-                    dmem_data_in <= 32'h00FF00FF;
-                    count <= STATE_DWELL_CYCLES;
-                    state <= MAGENTA;
-                end
-            end
-            MAGENTA: begin
-                if (count > 22'd0) begin
-                    count <= count - 1;
-                end
-                else begin
-                    dmem_data_in <= 32'hFFFF0000;
-                    count <= STATE_DWELL_CYCLES;
-                    state <= RED;
-                end
-            end
+        if (!adr_src)
+            imem_address <= pc;
+        else imem_address <= result;
+        if (ir_write)
+            store_instr <= imem_data_out;
+            old_pc <= pc;
+        else store_data <= dmem_data_out;
+
+        rd1_data <= rd1
+        rd2_data <= rd2
+
+        case alu_src_a:
+            2'b00: src_a <= pc;
+            2'b01: src_a <= old_pc;
+            2'b10: src_a <= rd1_data;
+            default:
+            $error("Error: Unexpected alu_src_a %b detected!", alu_src_a);
         endcase
+
+        case alu_src_b:
+            2'b00: src_b <= rd2_data;
+            2'b01: src_b <= imm_ext;
+            2'b10: src_b <= 31'h4;
+            default:
+            $error("Error: Unexpected alu_src_b %b detected!", alu_src_b);
+        endcase
+        
+        alu_reg <= alu_result;
+
+        case result_src:
+            2'b00: result <= alu_reg;
+            2'b01: result <= store_data;
+            2'b10: result <= alu_result;
+            default:
+            $error("Error: Unexpected result_src %b detected!", result_src);
+        endcase
+
+        if (pc_write)
+            pc_next <= result;
+
     end
 
     memory #(
@@ -116,7 +88,7 @@ module top (
     ) u1 (
         .clk            (clk), 
         .funct3         (funct3), 
-        .dmem_wren      (dmem_wren), 
+        .dmem_wren      (mem_write), 
         .dmem_address   (dmem_address), 
         .dmem_data_in   (dmem_data_in), 
         .imem_address   (imem_address), 
@@ -129,9 +101,126 @@ module top (
         .blue           (blue)
     );
 
+    control u2 (
+        .clk             (clk),
+        .pc_write        (pc_write),
+        .adr_src         (adr_src),
+        .mem_write       (mem_write),
+        .ir_write        (ir_write),
+        .result_src      (result_src),
+        .alu_control     (alu_control),
+        .alu_src_b       (alu_src_b),
+        .alu_src_a       (alu_src_a),
+        .imm_src         (imm_src),
+        .reg_write       (reg_write)
+    );
+
+    register_file u3 (
+        .clk             (clk),
+        .instr           (instr),
+        .write_en_3      (reg_write),
+        .write_data_3    (result),
+        .rd1             (rd1),
+        .rd2             (rd2)
+    )
+
+    imm_extend u4 (
+        .instr           (instr),
+        .imm_src         (imm_src),
+        .imm_ext         (imm_ext) // flows to alusrcb multiplexer
+    )
+
+
+
+
     assign LED = ~led;
     assign RGB_R = ~red;
     assign RGB_G = ~green;
     assign RGB_B = ~blue;
+
+    // localparam [3:0] INIT       = 4'd0;
+    // localparam [3:0] RED        = 4'd1;
+    // localparam [3:0] YELLOW     = 4'd2;
+    // localparam [3:0] GREEN      = 4'd3;
+    // localparam [3:0] CYAN       = 4'd4;
+    // localparam [3:0] BLUE       = 4'd5;
+    // localparam [3:0] MAGENTA    = 4'd6;
+
+    // localparam [21:0] STATE_DWELL_CYCLES = 22'd3000000;
+
+    // logic [3:0] state = INIT;
+    // logic [21:0] count = 22'd0;
+
+    // always_ff @(negedge clk) begin
+    //     case (state)
+    //         INIT: begin
+    //             dmem_address <= 32'hFFFFFFFC;
+    //             dmem_data_in <= 32'hFFFF0000;
+    //             dmem_wren <= 1'b1;
+    //             count <= STATE_DWELL_CYCLES;
+    //             state <= RED;
+    //         end
+    //         RED: begin
+    //             if (count > 22'd0) begin
+    //                 count <= count - 1;
+    //             end
+    //             else begin
+    //                 dmem_data_in <= 32'hFFFFFF00;
+    //                 count <= STATE_DWELL_CYCLES;
+    //                 state <= YELLOW;
+    //             end
+    //         end
+    //         YELLOW: begin
+    //             if (count > 22'd0) begin
+    //                 count <= count - 1;
+    //             end
+    //             else begin
+    //                 dmem_data_in <= 32'hFF00FF00;
+    //                 count <= STATE_DWELL_CYCLES;
+    //                 state <= GREEN;
+    //             end
+    //         end
+    //         GREEN: begin
+    //             if (count > 22'd0) begin
+    //                 count <= count - 1;
+    //             end
+    //             else begin
+    //                 dmem_data_in <= 32'h0000FFFF;
+    //                 count <= STATE_DWELL_CYCLES;
+    //                 state <= CYAN;
+    //             end
+    //         end
+    //         CYAN: begin
+    //             if (count > 22'd0) begin
+    //                 count <= count - 1;
+    //             end
+    //             else begin
+    //                 dmem_data_in <= 32'h000000FF;
+    //                 count <= STATE_DWELL_CYCLES;
+    //                 state <= BLUE;
+    //             end
+    //         end
+    //         BLUE: begin
+    //             if (count > 22'd0) begin
+    //                 count <= count - 1;
+    //             end
+    //             else begin
+    //                 dmem_data_in <= 32'h00FF00FF;
+    //                 count <= STATE_DWELL_CYCLES;
+    //                 state <= MAGENTA;
+    //             end
+    //         end
+    //         MAGENTA: begin
+    //             if (count > 22'd0) begin
+    //                 count <= count - 1;
+    //             end
+    //             else begin
+    //                 dmem_data_in <= 32'hFFFF0000;
+    //                 count <= STATE_DWELL_CYCLES;
+    //                 state <= RED;
+    //             end
+    //         end
+    //     endcase
+    // end
 
 endmodule
