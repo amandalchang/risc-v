@@ -33,4 +33,28 @@ module ALU_decoder(
     output [2:0] alu_control
 );
 
+    logic [2:0] alu_control = 3'bxxx;
+
+    always_comb begin
+        case (alu_op) // read the ALU opcode
+            00: alu_control <= 3'b000;
+            01: alu_control <= 3'b001;
+            10: begin
+                    case (funct3)
+                        000: begin
+                            case ({op_5, funct7_5})
+                                11: alu_control <= 3'b000;
+                                default: alu_control <= 3'b000; // 00, 01, 10
+                            endcase
+                        end
+                        010: alu_control <= 3'b101;
+                        110: alu_control <= 3'b011;
+                        111: alu_control <= 3'b010;
+                        default: alu_control <= 3'bxxx;
+                    endcase
+                end
+            default: alu_control <= 3'bxxx;
+        endcase
+    end
+
 endmodule
