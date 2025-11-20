@@ -27,16 +27,20 @@ logic zero;
 always_comb begin
     case (alu_control):
         ADD:
-            alu_result <= scr_a + src_b;
+            alu_result = scr_a + src_b;
         SUB:
-            alu_result <= scr_a - src_b;
+            alu_result = scr_a - src_b;
         AND: 
-            zero <= scr_a & src_b; // HELP
+            alu_result = scr_a & src_b; // HELP
         OR:
-            zero <= scr_a | src_b; // HELP
+            alu_result = scr_a | src_b; // HELP
         SLT:
-            zero <= scr_a < src_b; // HELP
+            alu_result = scr_a < src_b; // HELP
+
+        default: alu_result = 32'b0;
     endcase
+
+    zero = (alu_control == 32'b0);
 end
 
 
