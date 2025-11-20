@@ -38,11 +38,12 @@ module instruction_decoder(
     localparam [2:0] imm_src = 3'bXXX;
 
     case (op) // read the opcode
-      ITYPE: imm_src <= 3'b000;
+      ITYPEA: imm_src <= 3'b000;
+      ITYPEL: imm_src <= 3'b000;
       STYPE:  imm_src <= 3'b001;
       BTYPE:  imm_src <= 3'b010;
       JTYPE:  imm_src <= 3'b011;
-      UTYPE: imm_src <= 3'b100;
+      UTYPE:  imm_src <= 3'b100;
       RTYPE:  imm_src <= 3'b111;
       default:
     endcase
