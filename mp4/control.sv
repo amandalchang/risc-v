@@ -5,7 +5,6 @@
 `include "instr_decoder.sv"
 
 
-
 module control(
     output logic pcwrite,
     output logic adrsrc,
@@ -43,6 +42,8 @@ module control(
 
     instruction_decoder u1 (
         .clk            (clk), 
+        .op             (),
+        .immsrc         ()
     );
     
 endmodule
