@@ -1,7 +1,18 @@
 // Control Unit
-//
+// given the op code, funct3, and funct7, outputs control signals to the rest of the processor
+
+`include "alu_decoder.sv"
+`include "instr_decoder.sv"
+
+
+
 module control(
+    output logic pcwrite,
+    output logic adrsrc,
+    output logic memwrite,
+    output logic irwrite
     input [31:0] instr,
+    input logic zero,
     output [1:0] resultsrc,
     output [2:0] alucontrol,
     output [1:0] alusrcb,
@@ -20,10 +31,18 @@ module control(
 
     localparam [2:0]
 
-    module aludecoder(
-        input [2:0] funct3,
-        input []
-    )
+    ALU_decoder u0 (
+        .clk            (clk), 
+        .funct3         (),
+        .op_5           (),
+        .funct7_5       (),
+        .alu_op         (),
+        .alu_control    ()
 
+    );
 
-
+    instruction_decoder u1 (
+        .clk            (clk), 
+    );
+    
+endmodule
