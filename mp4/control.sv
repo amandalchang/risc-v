@@ -6,29 +6,32 @@
 
 
 module control(
-    output logic pcwrite,
-    output logic adrsrc,
-    output logic memwrite,
-    output logic irwrite
+    output logic pc_write,
+    output logic adr_src,
+    output logic mem_write,
+    output logic ir_write
     input [31:0] instr,
     input logic zero,
-    output [1:0] resultsrc,
-    output [2:0] alucontrol,
-    output [1:0] alusrcb,
-    output [1:0] alusrca,
-    output [1:0] immsrc,
-    output logic regwrite
+    output [1:0] result_src,
+    output [2:0] alu_control,
+    output [1:0] alu_src_b,
+    output [1:0] alu_src_a,
+    output [1:0] imm_src,
+    output logic reg_write
 );
-    // 7 bit opcodes decoded
-    localparam [6:0] UTYPE  = 7'b0110111;
-    localparam [6:0] ITYPEA = 7'b0010011;
-    localparam [6:0] ITYPEL = 7'b0000011;
-    localparam [6:0] STYPE  = 7'b0100011;
-    localparam [6:0] BTYPE  = 7'b1100011;
-    localparam [6:0] JTYPE  = 7'b1101111;
-    localparam [6:0] RTYPE  = 7'b0110011;
-
-    localparam [2:0]
+    // State variables; naming is defined by starting color
+    localparam [3:0] FETCH = 4'b0000;
+    localparam [3:0] DECODE = 4'b0001;
+    localparam [3:0] MEMADR = 4'b0010;
+    localparam [3:0] MEMREAD = 4'b0011;
+    localparam [3:0] EXECUTE_R = 4'b0100;
+    localparam [3:0] EXECUTE_L = 4'b0101;
+    localparam [3:0] ALUWB = 4'b0110;
+    localparam [3:0] BRANCH = 4'b0111;
+    localparam [3:0] JAL = 4'b1000;
+    
+    // Declare state variables
+    localparam [3:0] current_state = FETCH;
 
     ALU_decoder u0 (
         .clk            (clk), 
