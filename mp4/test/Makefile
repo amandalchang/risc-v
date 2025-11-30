@@ -11,7 +11,7 @@ VERILOG_SOURCES += ../control_v2.sv
 COCOTB_TOPLEVEL = control
 
 # COCOTB_TEST_MODULES is the basename of the Python test file(s)
-COCOTB_TEST_MODULES = cocotb_test.py
+COCOTB_TEST_MODULES = cocotb_test
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim

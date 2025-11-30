@@ -16,21 +16,25 @@ module control(
     localparam [3:0] JAL = 4'b1000;
 
 
-// Register the next state of the FSM
-    always_ff @(posedge clk)
-        current_state <= next_state;
+logic [3:0] current_state = 4'b1111;
+logic [3:0] next_state;
 
-    // Compute the next state of the FSM
-    always_comb begin
-        next_state = 4'bxxxx;
-        case (current_state)
-            FETCH: next_state <= DECODE;
-            DECODE: next_state <= MEMADR;
-            MEMADR: next_state <= EXECUTER;
-            EXECUTER: next_state <= EXECUTEL;
-            EXECUTEL: next_state <= JAL;
-            JAL: next_state <= FETCH;
-        endcase
-    end
+
+// Register the next state of the FSM
+// always_ff @(posedge clk)
+//     current_state <= next_state;
+
+// // Compute the next state of the FSM
+// always_comb begin
+//     next_state = 4'bxxxx;
+//     case (current_state)
+//         FETCH: next_state = DECODE;
+//         DECODE: next_state = MEMADR;
+//         MEMADR: next_state = EXECUTE_R;
+//         EXECUTE_R: next_state = EXECUTE_L;
+//         EXECUTE_L: next_state = JAL;
+//         JAL: next_state = FETCH;
+//     endcase
+// end
 
 endmodule

@@ -14,5 +14,5 @@ async def my_first_test(dut):
         dut.clk.value = 1
         await Timer(1, unit="ns")
 
-    cocotb.log.info("my_signal_1 is %s", dut.my_signal_1.value)
-    assert dut.my_signal_2.value == 0
+    cocotb.log.info("my_signal_1 is %s", dut.current_state.value)
+    # assert dut.my_signal_2.value == 0
