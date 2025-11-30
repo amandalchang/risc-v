@@ -8,11 +8,13 @@ References
 
 module alu(
     input logic [2:0] alu_control,
-    input logic alu_op,
-    input logic [0:31] scr_a,
-    input logic [0:31] src_b,
-    output logic [0:31] alu_result,
-    output logic zero
+    input logic [31:0] src_a,
+    input logic [31:0]] src_b,
+    output logic [31:0] alu_result,
+    output logic zero,
+    output logic carry,
+    output logic sign,
+    output logic overflow
 );
 
 // ALUControl is 000 for addition, 001 for subtraction, 010 for AND, 011 for OR, and 101 for set less than.
@@ -22,54 +24,46 @@ localparam AND = 3'b010;
 localparam OR = 3'b011;
 localparam SLT = 3'b101; // SET_LESS_THAN
 
-// Branching functions if alu_op is true (1)
-localparam BEQ = 3'b000; // equal
-localparam BNE = 3'b001; // not equal
-localparam BLT = 3'b100; // less than
-localparam BGTOE = 3'b101; // greater than or equal
-localparam BLTU = 3'b110; // less than unsigned
-localparam BGTOEU = 3'b111; // greater than or equal unsigned
-
-
-logic [0:31] alu_result;
+logic [31:0] alu_result;
+logic [32:0] wide_result;
+// Thus, the N (Negative) flag is connected to the most significant bit of the ALU output, Result31. 
+// The Z (Zero) flag is asserted when all of the bits of Result are 0, as detected by the N-bit NOR gate in Figure 5.17. 
+// The C (Carry out) flag is asserted when the adder produces a carry out
+//          and the ALU is performing addition or subtraction (indicated by ALUControl1 = 0).
 logic zero;
-logic alu_op;
+logic carry;
+logic sign;
+// WHEN THESE 3 THINGS ARE TRUE
+// (1) the ALU is performing addition or subtraction (ALUControl1 = 0)
+// (2) A and Sum have opposite signs, as detected by the XOR gate
+// (3) overflow is possible. That is, as detected by the XNOR gate, either A and B have the same sign 
+//          and the adder is performing addition (ALUControl0 = 0) or A and B have opposite signs 
+//          and the adder is performing subtraction (ALUControl0 = 1). 
+logic overflow_possible;
+logic overflow;
 
 always_comb begin
     case (alu_control):
-        if (alu_op) begin
-            // add BRANCHING FUNCTIONS
-            BEQ:
-                alu_result = (scr_a == src_b);
-            BNE:
-                alu_result = (scr_a != src_b);
-            BLT:
-                alu_result = (scr_a <= src_b);
-            BGTOE:
-                alu_result = ((src_a > src_b) | (scr_a == src_b));
-            BLTU:
-                alu_result = // HELP WHA UNSIGNED????!!!
-            BGTOEU:
-                alu_result = // HELPPPP
-
-        end else begin
-            ADD:
-                alu_result = scr_a + src_b;
-            SUB:
-                alu_result = scr_a - src_b;
-            AND: 
-                alu_result = (scr_a & src_b); // HELP
-            OR:
-                alu_result = (scr_a | src_b); // HELP
-            SLT:
-                alu_result = (scr_a < src_b); // HELP
-        end
+        ADD:
+            wide_result = {1'b0, src_a} + {1'b0, src_b}
+            alu_result = wide_result[31:0];
+        SUB:
+            alu_result = src_a - src_b;
+        AND: 
+            alu_result = (src_a & src_b);
+        OR:
+            alu_result = (src_a | src_b);
+        SLT:
+            alu_result = (src_a < src_b); // HELP
 
         default: alu_result = 32'b0;
     endcase
 
-    zero = (alu_control == 32'b0);
+    overflow_possible = (((src_a[31] == src_b[31]) & alu_control == ADD) | ((src_a[31] != src_b[31]) & alu_control == SUB));
+
+    zero = (alu_result == 32'b0);
+    carry = ((alu_control == (ADD | SUB)) & (wide_result[32] == 1));
+    sign = (alu_result[31] == 1);
+    overflow = ((alu_control == (ADD | SUB)) & (src_a[31] != (src_a + src_b)) & (overflow_possible == 1));
 end
-
-
 endmodule
