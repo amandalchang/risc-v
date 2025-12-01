@@ -67,55 +67,71 @@ module control(
                 alu_src_b = 2'b01;
                 alu_op = 2'b00;
             end
-            MEMADR: begin
-                // state logic
-                alu_src_a = 2'b10;
-                alu_src_b = 2'b01;
-                alu_op = 2'b00;
+            EXECUTE: begin
+            case(opcode)
+                MEMADR: begin
+                    // state logic
+                    alu_src_a = 2'b10;
+                    alu_src_b = 2'b01;
+                    alu_op = 2'b00;
+                end
+                EXECUTE_R: begin
+                    // state logic
+                    alu_src_a = 2'b10;
+                    alu_src_b = 2'b00;
+                    alu_op = 2'b10;
+                end
+                EXECUTE_L: begin
+                    // state logic
+                    alu_src_a = 2'b10;
+                    alu_src_b = 2'b01;
+                    alu_op = 2'b10;
+                end
+                JAL: begin
+                    // state logic
+                    alu_src_a = 2'b01;
+                    alu_src_b = 2'b10;
+                    alu_op = 2'b00;
+                    result_src = 2'b00;
+                    pc_update = 1'b1;
+                end
+                BRANCH: begin
+                    // state logic
+                    alu_src_a = 2'b10;
+                    alu_src_b = 2'b00;
+                    alu_op = 2'b01;
+                    result_src = 2'b00;
+                    branch = 1'b1;
+                end
+            endcase
             end
-            EXECUTE_R: begin
-                // state logic
-                alu_src_a = 2'b10;
-                alu_src_b = 2'b00;
-                alu_op = 2'b10;
+            READ_WRITE: begin
+            case(opcode)
+                MEMREAD: begin
+                    result_src = 2'b00;
+                    adr_src = 1'b1;
+                end
+                MEMWRITE: begin
+                    result_src = 2'b00;
+                    adr_src = 1'b1;
+                    mem_write = 1'b1;
+                end
+                ALUWB: begin
+                    result_src = 2'b00;
+                    reg_write = 1'b1;
+                end
+            endcase
             end
-            EXECUTE_L: begin
-                // state logic
-                alu_src_a = 2'b10;
-                alu_src_b = 2'b01;
-                alu_op = 2'b10;
-            end
-            JAL: begin
-                // state logic
-                alu_src_a = 2'b01;
-                alu_src_b = 2'b10;
-                alu_op = 2'b00;
-                result_src = 2'b00;
-                pc_update = 1'b1;
-            end
-            BRANCH: begin
-                // state logic
-                alu_src_a = 2'b10;
-                alu_src_b = 2'b00;
-                alu_op = 2'b01;
-                result_src = 2'b00;
-                branch = 1'b1;
-            end
-            MEMREAD: begin
-                result_src = 2'b00;
-                adr_src = 1'b1;
-            end
-            MEMWRITE: begin
-                result_src = 2'b00;
-                adr_src = 1'b1;
-                mem_write = 1'b1;
-            end
-            ALUWB: begin
-                result_src = 2'b00;
-                reg_write = 1'b1;
+            REG_WRITE: begin
+            case(opcode)
+                MEMWB:
+                    result_src = 2'b01;
+                    reg_write = 1'b1;
+                default:
+                    continue
+            endcase
             end
 
-            
         endcase
     end
 
