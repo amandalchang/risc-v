@@ -6,24 +6,24 @@
 
 module register_file(
     input clk,
-    input [0:31] instr,
+    input [31:0] instr,
     input write_en_3, // RegWrite from controller
-    input [0:31] result, // Result from ALUOut
-    output [0:31] rd1,
-    output [0:31] rd2
+    input [31:0] result, // Result from ALUOut
+    output [31:0] rd1,
+    output [31:0] rd2
 );
 
-logic [0:31] reg_data [32];
+logic [31:0] reg_data [32];
 
-logic [0:4] a1 = instr[19:15]; // Rs1
-logic [0:4] a2 = instr[24:20]; // Rs2
-logic [0:4] a3 = instr[11:7];  // Rd
+logic [4:0] a1 = instr[19:15]; // Rs1
+logic [4:0] a2 = instr[24:20]; // Rs2
+logic [4:0] a3 = instr[11:7];  // Rd
 
 // write data
-logic [0:31] write_data_3 = result;
+logic [31:0] write_data_3 = result;
 
-logic [0:31] rd1 = reg_data[a1];
-logic [0:31] rd2 = reg_data[a2];
+logic [31:0] rd1 = reg_data[a1];
+logic [31:0] rd2 = reg_data[a2];
 
 always_comb begin
     a1 <= instr[19:15]; // Rs1
