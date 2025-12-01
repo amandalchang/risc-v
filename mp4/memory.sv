@@ -32,10 +32,10 @@ module memory #(
     input logic     [2:0] funct3, 
     input logic     dmem_wren, 
     input logic     [31:0] dmem_address, 
-    input logic     [31:0] dmem_data_in, 
-    input logic     [31:0] imem_address, 
-    output logic    [31:0] imem_data_out, 
-    output logic    [31:0] dmem_data_out, 
+    input logic     [31:0] dmem_data_in,  // 
+    input logic     [31:0] imem_address,  // A
+    output logic    [31:0] imem_data_out, // RD
+    output logic    [31:0] dmem_data_out, // WD
     output logic    reset, 
     output logic    led,                    // Active-high PWM output for user LED
     output logic    red,                    // Active-high PWM output for red LED
