@@ -45,10 +45,11 @@ logic overflow;
 always_comb begin
     case (alu_control):
         ADD:
-            wide_result = {1'b0, src_a} + {1'b0, src_b}
+            wide_result = {1'b0, src_a} + {1'b0, src_b};
             alu_result = wide_result[31:0];
         SUB:
-            alu_result = src_a - src_b;
+            wide_result = {1'b0, src_a} - {1'b0, src_b};
+            alu_result = wide_result[31:0];
         AND: 
             alu_result = (src_a & src_b);
         OR:
