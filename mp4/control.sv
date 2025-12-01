@@ -144,8 +144,10 @@ module control(
                     continue
             endcase
             end
-
         endcase
+        if (current_state==WRITE_BACK) begin
+            current_state = FETCH;
+        end else current_state += 1'b1;
     end
 
     ALU_decoder u0 (
