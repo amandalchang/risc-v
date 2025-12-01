@@ -127,7 +127,7 @@ module top (
     imm_extend u4 (
         .instr           (instr),
         .imm_src         (imm_src),
-        .imm_ext         (imm_ext) // flows to alusrcb multiplexer
+        .imm_ext         (imm_ext) // flows to alu_src_b multiplexer
     )
 
 
