@@ -9,7 +9,7 @@ References
 module alu(
     input logic [2:0] alu_control,
     input logic [31:0] src_a,
-    input logic [31:0]] src_b,
+    input logic [31:0] src_b,
     output logic [31:0] alu_result,
     output logic zero,
     output logic carry,
@@ -24,15 +24,15 @@ localparam AND = 3'b010;
 localparam OR = 3'b011;
 localparam SLT = 3'b101; // SET_LESS_THAN
 
-logic [31:0] alu_result;
+// logic [31:0] alu_result;
 logic [32:0] wide_result;
 // Thus, the N (Negative) flag is connected to the most significant bit of the ALU output, Result31. 
 // The Z (Zero) flag is asserted when all of the bits of Result are 0, as detected by the N-bit NOR gate in Figure 5.17. 
 // The C (Carry out) flag is asserted when the adder produces a carry out
 //          and the ALU is performing addition or subtraction (indicated by ALUControl1 = 0).
-logic zero;
-logic carry;
-logic sign;
+// logic zero;
+// logic carry;
+// logic sign;
 // WHEN THESE 3 THINGS ARE TRUE
 // (1) the ALU is performing addition or subtraction (ALUControl1 = 0)
 // (2) A and Sum have opposite signs, as detected by the XOR gate
@@ -40,16 +40,18 @@ logic sign;
 //          and the adder is performing addition (ALUControl0 = 0) or A and B have opposite signs 
 //          and the adder is performing subtraction (ALUControl0 = 1). 
 logic overflow_possible;
-logic overflow;
+// logic overflow;
 
 always_comb begin
-    case (alu_control):
-        ADD:
-            wide_result = {1'b0, src_a} + {1'b0, src_b};
-            alu_result = wide_result[31:0];
-        SUB:
-            wide_result = {1'b0, src_a} - {1'b0, src_b};
-            alu_result = wide_result[31:0];
+    case (alu_control)
+        ADD: begin
+                wide_result = {1'b0, src_a} + {1'b0, src_b};
+                alu_result = wide_result[31:0];
+            end
+        SUB: begin
+                wide_result = {1'b0, src_a} - {1'b0, src_b};
+                alu_result = wide_result[31:0];
+            end
         AND: 
             alu_result = (src_a & src_b);
         OR:
