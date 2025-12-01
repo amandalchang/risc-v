@@ -20,23 +20,36 @@ module control(
     output logic    [1:0] reg_write
 );
 
+    localparam opcode = instr[6:0];
+    localparam funct3 = instr[14:12];
+    localparam funct7 = instr[31:25];
     logic pc_update = 1'b0;
     logic branch = 1'b0;
     // State variables; naming is defined by starting color
-    localparam [3:0] FETCH = 4'b0000;
-    localparam [3:0] DECODE = 4'b0001;
-    localparam [3:0] MEMADR = 4'b0010;
-    localparam [3:0] EXECUTE_R = 4'b0100;
-    localparam [3:0] EXECUTE_L = 4'b0101;
-    localparam [3:0] BRANCH = 4'b0111;
-    localparam [3:0] JAL = 4'b1000;
-    localparam [3:0] MEMREAD = 4'b0011;
-    localparam [3:0] MEMWRITE = 4'b1001;
-    localparam [3:0] ALUWB = 4'b0110;
-    localparam [3:0] MEMWB = 4'b1010;
+    localparam [2:0] FETCH = 3'b000;
+    localparam [2:0] DECODE = 3'b001;
 
-    localparam [1:0] A_PC = 2'b00;
-    localparam [1:0] 
+    localparam [2:0] EXECUTE = 3'b010;
+    localparam [6:0] MEMADR = 7'b0x00011;
+    localparam [6:0] EXECUTE_R = 7'b0110011;
+    localparam [6:0] EXECUTE_L = 7'b0010011;
+    localparam [6:0] JAL = 7'b1101111;
+    localparam [6:0] BRANCH = 7'b1100011;
+
+    localparam [2:0] MEMORY = 3'b011;
+    localparam [6:0] MEMREAD = 7'b0000011;
+    localparam [6:0] MEMWRITE = 7'b0100011;
+    localparam [6:0] ALUWB = 7'b;
+    // 1100011 Non ALUWB codes
+    // 0000011
+    // 0100011
+    
+    // 0110011 These are the ALUWB codes
+    // 0010011
+    // 1101111
+
+    localparam [2:0] WRITE_BACK = 3'b100;
+    localparam [6:0] MEMWB = MEMREAD;
     
     // Declare state variables
     logic [3:0] current_state = FETCH;
@@ -105,7 +118,7 @@ module control(
                 end
             endcase
             end
-            READ_WRITE: begin
+            MEMORY: begin
             case(opcode)
                 MEMREAD: begin
                     result_src = 2'b00;
@@ -122,7 +135,7 @@ module control(
                 end
             endcase
             end
-            REG_WRITE: begin
+            WRITE_BACK: begin
             case(opcode)
                 MEMWB:
                     result_src = 2'b01;
@@ -135,22 +148,20 @@ module control(
         endcase
     end
 
-endmodule
-
     ALU_decoder u0 (
         .clk            (clk), 
-        .funct3         (),
-        .op_5           (),
-        .funct7_5       (),
-        .alu_op         (),
-        .alu_control    ()
+        .funct3         (funct3),
+        .op_5           (opcode),
+        .funct7_5       (funct7),
+        .alu_op         (alu_op),
+        .alu_control    (alu_control)
 
     );
 
     instruction_decoder u1 (
         .clk            (clk), 
-        .op             (),
-        .immsrc         ()
+        .op             (opcode),
+        .imm_src        (imm_src)
     );
-    
+
 endmodule
