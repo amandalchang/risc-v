@@ -130,6 +130,16 @@ module top (
         .imm_ext         (imm_ext) // flows to alu_src_b multiplexer
     )
 
+    alu u5 (
+        .alu_control       (alu_control),
+        .src_a             (src_a),
+        .src_b             (src_b),
+        .alu_result        (alu_result),
+        .zero              (zero),
+        .carry             (carry),
+        .sign              (sign),
+        .overflow          (overlow)
+    );
 
 
 
@@ -137,90 +147,4 @@ module top (
     assign RGB_R = ~red;
     assign RGB_G = ~green;
     assign RGB_B = ~blue;
-
-    // localparam [3:0] INIT       = 4'd0;
-    // localparam [3:0] RED        = 4'd1;
-    // localparam [3:0] YELLOW     = 4'd2;
-    // localparam [3:0] GREEN      = 4'd3;
-    // localparam [3:0] CYAN       = 4'd4;
-    // localparam [3:0] BLUE       = 4'd5;
-    // localparam [3:0] MAGENTA    = 4'd6;
-
-    // localparam [21:0] STATE_DWELL_CYCLES = 22'd3000000;
-
-    // logic [3:0] state = INIT;
-    // logic [21:0] count = 22'd0;
-
-    // always_ff @(negedge clk) begin
-    //     case (state)
-    //         INIT: begin
-    //             dmem_address <= 32'hFFFFFFFC;
-    //             dmem_data_in <= 32'hFFFF0000;
-    //             dmem_wren <= 1'b1;
-    //             count <= STATE_DWELL_CYCLES;
-    //             state <= RED;
-    //         end
-    //         RED: begin
-    //             if (count > 22'd0) begin
-    //                 count <= count - 1;
-    //             end
-    //             else begin
-    //                 dmem_data_in <= 32'hFFFFFF00;
-    //                 count <= STATE_DWELL_CYCLES;
-    //                 state <= YELLOW;
-    //             end
-    //         end
-    //         YELLOW: begin
-    //             if (count > 22'd0) begin
-    //                 count <= count - 1;
-    //             end
-    //             else begin
-    //                 dmem_data_in <= 32'hFF00FF00;
-    //                 count <= STATE_DWELL_CYCLES;
-    //                 state <= GREEN;
-    //             end
-    //         end
-    //         GREEN: begin
-    //             if (count > 22'd0) begin
-    //                 count <= count - 1;
-    //             end
-    //             else begin
-    //                 dmem_data_in <= 32'h0000FFFF;
-    //                 count <= STATE_DWELL_CYCLES;
-    //                 state <= CYAN;
-    //             end
-    //         end
-    //         CYAN: begin
-    //             if (count > 22'd0) begin
-    //                 count <= count - 1;
-    //             end
-    //             else begin
-    //                 dmem_data_in <= 32'h000000FF;
-    //                 count <= STATE_DWELL_CYCLES;
-    //                 state <= BLUE;
-    //             end
-    //         end
-    //         BLUE: begin
-    //             if (count > 22'd0) begin
-    //                 count <= count - 1;
-    //             end
-    //             else begin
-    //                 dmem_data_in <= 32'h00FF00FF;
-    //                 count <= STATE_DWELL_CYCLES;
-    //                 state <= MAGENTA;
-    //             end
-    //         end
-    //         MAGENTA: begin
-    //             if (count > 22'd0) begin
-    //                 count <= count - 1;
-    //             end
-    //             else begin
-    //                 dmem_data_in <= 32'hFFFF0000;
-    //                 count <= STATE_DWELL_CYCLES;
-    //                 state <= RED;
-    //             end
-    //         end
-    //     endcase
-    // end
-
 endmodule
