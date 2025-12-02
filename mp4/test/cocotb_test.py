@@ -5,14 +5,14 @@ from cocotb.triggers import Timer
 
 
 @cocotb.test()
-async def my_first_test(dut):
+async def two_clk_cycles(dut):
     """Try accessing the design."""
 
-    for _ in range(10):
+    for _ in range(2):
         dut.clk.value = 0
         await Timer(1, unit="ns")
         dut.clk.value = 1
         await Timer(1, unit="ns")
 
-    cocotb.log.info("my_signal_1 is %s", dut.current_state.value)
-    # assert dut.my_signal_2.value == 0
+    cocotb.log.info("current state is %s", dut.current_state.value)
+    assert dut.current_state.value == 0b001
