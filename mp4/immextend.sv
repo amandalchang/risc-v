@@ -1,9 +1,9 @@
 // Immediate Extender
 //
 module imm_extend (
-    input [31:0] instr,
-    input [2:0] imm_src,
-    output [31:0] imm_ext
+    input logic [31:0] instr,
+    input logic [2:0] imm_src,
+    output logic [31:0] imm_ext
 );
     // 7 bit opcodes decoded
     localparam [2:0] ITYPE = 3'b000;
