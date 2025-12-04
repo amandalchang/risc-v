@@ -124,16 +124,12 @@ module top (
             2'b00: src_a <= pc;
             2'b01: src_a <= old_pc;
             2'b10: src_a <= rd1_data;
-            default:
-            // $error("Error: Unexpected alu_src_a %b detected!", alu_src_a);
         endcase
 
         case (alu_src_b)
             2'b00: src_b <= rd2_data;
             2'b01: src_b <= imm_ext;
             2'b10: src_b <= 31'h4;
-            default:
-            // $error("Error: Unexpected alu_src_b %b detected!", alu_src_b);
         endcase
         
         alu_reg <= alu_result;
@@ -142,8 +138,6 @@ module top (
             2'b00: result <= alu_reg;
             2'b01: result <= store_data;
             2'b10: result <= alu_result;
-            default:
-            // $error("Error: Unexpected result_src %b detected!", result_src);
         endcase
 
         if (pc_write)
