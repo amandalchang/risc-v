@@ -178,7 +178,7 @@ module control(
                         adr_src <= 1'b1;
                         mem_write <= 1'b1;
                     end
-                    EXECUTE_R, EXECUTE_L, JAL: // ALUWB
+                    EXECUTE_R, EXECUTE_L, JAL: begin // ALUWB
                         result_src <= 2'b00;
                         reg_write <= 1'b1;
                     end
