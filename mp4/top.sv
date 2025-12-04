@@ -11,7 +11,7 @@ module top (
     output logic RGB_B
 );
     localparam [31:0] pc_next = 32'h1000;
-    localparam [31:0] pc; // beginning of imem addresses
+    localparam [31:0] pc = 32'h00001000; // beginning of imem addresses
     localparam [31:0] old_pc = 32'h0;
     localparam [31:0] store_instr = 32'h0;
     localparam [31:0] store_data = 32'h0;
@@ -44,15 +44,16 @@ module top (
         if (!adr_src)
             imem_address <= pc;
         else imem_address <= result;
-        if (ir_write)
+        if (ir_write) begin
             store_instr <= imem_data_out;
             old_pc <= pc;
+        end
         else store_data <= dmem_data_out;
 
-        rd1_data <= rd1
-        rd2_data <= rd2
+        rd1_data <= rd1;
+        rd2_data <= rd2;
 
-        case alu_src_a:
+        case (alu_src_a)
             2'b00: src_a <= pc;
             2'b01: src_a <= old_pc;
             2'b10: src_a <= rd1_data;
@@ -60,7 +61,7 @@ module top (
             $error("Error: Unexpected alu_src_a %b detected!", alu_src_a);
         endcase
 
-        case alu_src_b:
+        case (alu_src_b)
             2'b00: src_b <= rd2_data;
             2'b01: src_b <= imm_ext;
             2'b10: src_b <= 31'h4;
@@ -70,7 +71,7 @@ module top (
         
         alu_reg <= alu_result;
 
-        case result_src:
+        case (result_src)
             2'b00: result <= alu_reg;
             2'b01: result <= store_data;
             2'b10: result <= alu_result;
@@ -119,16 +120,16 @@ module top (
         .clk             (clk),
         .instr           (instr),
         .write_en_3      (reg_write),
-        .write_data_3    (result),
+        .result          (result),
         .rd1             (rd1),
         .rd2             (rd2)
-    )
+    );
 
     imm_extend u4 (
         .instr           (instr),
         .imm_src         (imm_src),
         .imm_ext         (imm_ext) // flows to alu_src_b multiplexer
-    )
+    );
 
     alu u5 (
         .alu_control       (alu_control),
