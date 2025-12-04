@@ -35,22 +35,19 @@ module top (
     logic green;
     logic blue;
 
-    logic [31:0] src_a = 32'd0;
-    logic [31:0] src_b = 32'd0;
-    logic [1:0] result_src = 2'd0;
-    logic [2:0] alu_control = 3'd0;
-    logic [1:0] alu_src_a = 2'd0;
-    logic [1:0] alu_src_b = 2'd0;
-    logic [1:0] imm_src = 2'd0;
-    logic [31:0] result = 32'd0;
-    logic [31:0] rd1 = 32'd0;
-    logic [31:0] rd2 = 32'd0;
-    logic [31:0] imm_ext = 32'd0;
-    logic [31:0] alu_result = 32'd0;
-
-    // always_ff @(negedge clk) begin
-    //     pc <= pc + 1;
-    // end
+    // submodule output variable declarations
+    logic [31:0] src_a;
+    logic [31:0] src_b;
+    logic [1:0] result_src;
+    logic [2:0] alu_control;
+    logic [1:0] alu_src_a;
+    logic [1:0] alu_src_b;
+    logic [2:0] imm_src;
+    logic [31:0] result;
+    logic [31:0] rd1;
+    logic [31:0] rd2;
+    logic [31:0] imm_ext;
+    logic [31:0] alu_result;
 
     memory #(
         .IMEM_INIT_FILE_PREFIX  ("rv32i_test")
