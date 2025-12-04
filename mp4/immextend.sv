@@ -21,7 +21,7 @@ module imm_extend (
             JTYPE:  imm_ext <= {{12{instr[31]}}, instr[19:12], instr[11], instr[30:20], 1'b0};
             UTYPE: imm_ext <= {instr[31:12], {12{1'b0}}};
             RTYPE:  imm_ext <= {32{1'b0}};
-            default:
+            default: $error("Error: Unexpected imm_src %b detected!", imm_src);
         endcase
         $display("%b", imm_ext);
     end
