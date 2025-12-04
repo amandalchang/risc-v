@@ -23,10 +23,10 @@ module top (
 
     logic [2:0] funct3 = 3'b010;
     logic dmem_wren = 1'b0;
-    logic [31:0] dmem_address = 31'd0;
-    logic [31:0] dmem_data_in = 31'd0;
+    logic [31:0] dmem_address = 32'd0;
+    logic [31:0] dmem_data_in = 32'd0;
     logic [31:0] dmem_data_out;
-    logic [31:0] imem_address = 31'h1000;
+    logic [31:0] imem_address = 32'h1000;
     logic [31:0] imem_data_out;
 
     logic reset;
@@ -34,6 +34,9 @@ module top (
     logic red;
     logic green;
     logic blue;
+
+    logic [31:0] src_a = 32'd0;
+    logic [31:0] src_b = 32'd0;
 
     // always_ff @(negedge clk) begin
     //     pc <= pc + 1;
