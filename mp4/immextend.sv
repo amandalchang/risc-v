@@ -15,15 +15,15 @@ module imm_extend (
 
     always_comb begin
         case (imm_src) // read the opcode
-            ITYPE: imm_ext <= {{20{instr[31]}}, instr[31:20]}; //sign extend imm so it can be added to rs1 to get memory address
-            STYPE:  imm_ext <= {{20{instr[31]}}, instr[31:25], instr[11:7]};
-            BTYPE:  imm_ext <= {{20{instr[31]}}, instr[7], instr[30:25], instr[11:8], 1'b0};
-            JTYPE:  imm_ext <= {{12{instr[31]}}, instr[19:12], instr[11], instr[30:20], 1'b0};
-            UTYPE: imm_ext <= {instr[31:12], {12{1'b0}}};
-            RTYPE:  imm_ext <= {32{1'b0}};
-            default: $error("Error: Unexpected imm_src %b detected!", imm_src);
+            ITYPE: imm_ext = {{20{instr[31]}}, instr[31:20]}; //sign extend imm so it can be added to rs1 to get memory address
+            STYPE:  imm_ext = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+            BTYPE:  imm_ext = {{20{instr[31]}}, instr[7], instr[30:25], instr[11:8], 1'b0};
+            JTYPE:  imm_ext = {{12{instr[31]}}, instr[19:12], instr[11], instr[30:20], 1'b0};
+            UTYPE: imm_ext = {instr[31:12], {12{1'b0}}};
+            RTYPE:  imm_ext = {32{1'b0}};
+           // default: $error("Error: Unexpected imm_src %b detected!", imm_src);
         endcase
-        $display("%b", imm_ext);
+        //$display("%b", imm_ext);
     end
 
 endmodule
