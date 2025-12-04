@@ -24,8 +24,8 @@ existing imm_src codes with a 0. Our table is therefore:
 
 module instruction_decoder(
     input logic clk,
-    input [6:0] op,
-    output [2:0] imm_src
+    input logic [6:0] op,
+    output logic [2:0] imm_src
 );
     localparam [6:0] ITYPEA = 7'b0010011;
     localparam [6:0] ITYPEL = 7'b0000011;
