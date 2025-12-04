@@ -141,18 +141,6 @@ module top (
         .overflow          (overlow)
     );
 
-    alu u5 (
-        .alu_control    (alu_control),
-        .src_a          (alu_src_a),
-        .src_b          (alu_src_b),
-        .alu_result     (alu_result),
-        .zero           (),
-        .carry          (),
-        .sign           (),
-        .overflow       ()
-
-    )
-
     assign LED = ~led;
     assign RGB_R = ~red;
     assign RGB_G = ~green;
