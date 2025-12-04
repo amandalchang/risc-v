@@ -37,6 +37,16 @@ module top (
 
     logic [31:0] src_a = 32'd0;
     logic [31:0] src_b = 32'd0;
+    logic [1:0] result_src = 2'd0;
+    logic [2:0] alu_control = 3'd0;
+    logic [1:0] alu_src_a = 2'd0;
+    logic [1:0] alu_src_b = 2'd0;
+    logic [1:0] imm_src = 2'd0;
+    logic [31:0] result = 32'd0;
+    logic [31:0] rd1 = 32'd0;
+    logic [31:0] rd2 = 32'd0;
+    logic [31:0] imm_ext = 32'd0;
+    logic [31:0] alu_result = 32'd0;
 
     // always_ff @(negedge clk) begin
     //     pc <= pc + 1;
@@ -66,7 +76,7 @@ module top (
         .adr_src         (adr_src),
         .mem_write       (mem_write),
         .ir_write        (ir_write),
-        .instr           (instr),
+        .instr           (imem_data_out),
         .zero            (zero),
         .carry           (carry),
         .sign            (sign),
@@ -81,7 +91,7 @@ module top (
 
     register_file u3 (
         .clk             (clk),
-        .instr           (instr),
+        .instr           (imem_data_out),
         .write_en_3      (reg_write),
         .result          (result),
         .rd1             (rd1),
@@ -89,7 +99,7 @@ module top (
     );
 
     imm_extend u4 (
-        .instr           (instr),
+        .instr           (imem_data_out),
         .imm_src         (imm_src),
         .imm_ext         (imm_ext) // flows to alu_src_b multiplexer
     );
