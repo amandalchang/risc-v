@@ -39,14 +39,14 @@ module instruction_decoder(
 
     always_comb begin
       case (op) // read the opcode
-        ITYPEA: imm_src <= 3'b000;
-        ITYPEL: imm_src <= 3'b000;
-        STYPE:  imm_src <= 3'b001;
-        BTYPE:  imm_src <= 3'b010;
-        JTYPE:  imm_src <= 3'b011;
-        UTYPE:  imm_src <= 3'b100;
-        RTYPE:  imm_src <= 3'b111;
-        //default:
+        ITYPEA: imm_src = 3'b000;
+        ITYPEL: imm_src = 3'b000;
+        STYPE:  imm_src = 3'b001;
+        BTYPE:  imm_src = 3'b010;
+        JTYPE:  imm_src = 3'b011;
+        UTYPE:  imm_src = 3'b100;
+        RTYPE:  imm_src = 3'b111;
+        default: $error("Error: Unexpected imm_src %b detected!", imm_src);
       endcase
     end
 
