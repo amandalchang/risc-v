@@ -22,8 +22,9 @@ logic [4:0] a3 = instr[11:7];  // Rd
 // write data
 logic [31:0] write_data_3 = result;
 
-logic [31:0] rd1 = reg_data[a1];
+logic [31:0] rd1 = reg_data[a1]; // prob don't need to declare this using logic [31:0]
 logic [31:0] rd2 = reg_data[a2];
+
 
 always_comb begin
     a1 <= instr[19:15]; // Rs1
@@ -39,10 +40,10 @@ always_comb begin
 end
 
 // we3 high: write wd3 data into a3 destination
-always_ff @(posedge clk) (
+always_ff @(posedge clk) begin
     if (write_en_3) begin
         reg_data[a3] <= write_data_3;
     end
-);
+end
 
 endmodule
