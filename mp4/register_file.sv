@@ -27,16 +27,16 @@ logic [31:0] rd2 = reg_data[a2];
 
 
 always_comb begin
-    a1 <= instr[19:15]; // Rs1
-    a2 <= instr[24:20]; // Rs2
-    a3 <= instr[11:7];  // Rd
+    a1 = instr[19:15]; // Rs1
+    a2 = instr[24:20]; // Rs2
+    a3 = instr[11:7];  // Rd
 
     // write data
     write_data_3 = result;
 
     // get read data using addresses
-    rd1 <= reg_data[a1];
-    rd2 <= reg_data[a2];
+    rd1 = reg_data[a1];
+    rd2 = reg_data[a2];
 end
 
 // we3 high: write wd3 data into a3 destination

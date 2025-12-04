@@ -108,87 +108,87 @@ module control(
         case (current_state) // increment based on state
             FETCH: begin
                 // reset enables
-                reg_write <= 1'b0;
-                mem_write <= 1'b0;
-                branch <= 1'b0;
+                reg_write = 1'b0;
+                mem_write = 1'b0;
+                branch = 1'b0;
                 // state logic
-                adr_src <= 1'b0;
-                ir_write <= 1'b1;
-                alu_src_a <= 2'b00; // pc
-                alu_src_b <= 2'b10; // 4
-                alu_op <= 2'b00; // ADD
-                result_src <= 2'b10; // from ALUResult
-                pc_update <= 1'b1; // prep for jump/branch
+                adr_src = 1'b0;
+                ir_write = 1'b1;
+                alu_src_a = 2'b00; // pc
+                alu_src_b = 2'b10; // 4
+                alu_op = 2'b00; // ADD
+                result_src = 2'b10; // from ALUResult
+                pc_update = 1'b1; // prep for jump/branch
             end
             DECODE: begin
                 // reset enables
-                ir_write <= 1'b0;
-                pc_update <= 1'b0;
+                ir_write = 1'b0;
+                pc_update = 1'b0;
                 // state logic
-                alu_src_a <= 2'b01;
-                alu_src_b <= 2'b01;
-                alu_op <= 2'b00;
+                alu_src_a = 2'b01;
+                alu_src_b = 2'b01;
+                alu_op = 2'b00;
             end
             EXECUTE: begin
                 case(opcode)
                     MEMADR: begin
                         // state logic
-                        alu_src_a <= 2'b10;
-                        alu_src_b <= 2'b01;
-                        alu_op <= 2'b00;
+                        alu_src_a = 2'b10;
+                        alu_src_b = 2'b01;
+                        alu_op = 2'b00;
                     end
                     EXECUTE_R: begin
                         // state logic
-                        alu_src_a <= 2'b10;
-                        alu_src_b <= 2'b00;
-                        alu_op <= 2'b10;
+                        alu_src_a = 2'b10;
+                        alu_src_b = 2'b00;
+                        alu_op = 2'b10;
                     end
                     EXECUTE_L: begin
                         // state logic
-                        alu_src_a <= 2'b10;
-                        alu_src_b <= 2'b01;
-                        alu_op <= 2'b10;
+                        alu_src_a = 2'b10;
+                        alu_src_b = 2'b01;
+                        alu_op = 2'b10;
                     end
                     JAL: begin
                         // state logic
-                        alu_src_a <= 2'b01;
-                        alu_src_b <= 2'b10;
-                        alu_op <= 2'b00;
-                        result_src <= 2'b00;
-                        pc_update <= 1'b1;
+                        alu_src_a = 2'b01;
+                        alu_src_b = 2'b10;
+                        alu_op = 2'b00;
+                        result_src = 2'b00;
+                        pc_update = 1'b1;
                     end
                     BRANCH: begin
                         // state logic
-                        alu_src_a <= 2'b10;
-                        alu_src_b <= 2'b00;
-                        alu_op <= 2'b01;
-                        result_src <= 2'b00;
-                        branch <= 1'b1;
+                        alu_src_a = 2'b10;
+                        alu_src_b = 2'b00;
+                        alu_op = 2'b01;
+                        result_src = 2'b00;
+                        branch = 1'b1;
                     end
                 endcase
             end
             MEMORY: begin
                 case(opcode)
                     MEMREAD: begin
-                        result_src <= 2'b00;
-                        adr_src <= 1'b1;
+                        result_src = 2'b00;
+                        adr_src = 1'b1;
                     end
                     MEMWRITE: begin
-                        result_src <= 2'b00;
-                        adr_src <= 1'b1;
-                        mem_write <= 1'b1;
+                        result_src = 2'b00;
+                        adr_src = 1'b1;
+                        mem_write = 1'b1;
                     end
                     EXECUTE_R, EXECUTE_L, JAL: begin // ALUWB
-                        result_src <= 2'b00;
-                        reg_write <= 1'b1;
+                        result_src = 2'b00;
+                        reg_write = 1'b1;
                     end
                 endcase
             end
             WRITE_BACK: begin
                 case(opcode)
                     MEMWB: begin
-                        result_src <= 2'b01;
-                        reg_write <= 1'b1;
+                        result_src = 2'b01;
+                        reg_write = 1'b1;
                     end
                     default: begin
                         // do nothing
