@@ -138,7 +138,7 @@ module top (
         .zero              (zero),
         .carry             (carry),
         .sign              (sign),
-        .overflow          (overlow)
+        .overflow          (overflow)
     );
 
     assign LED = ~led;
