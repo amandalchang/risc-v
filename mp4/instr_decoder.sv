@@ -35,7 +35,7 @@ module instruction_decoder(
     localparam [6:0] UTYPE  = 7'b0110111;
     localparam [6:0] RTYPE  = 7'b0110011;
 
-    localparam [2:0] imm_src = 3'bXXX;
+    //localparam [2:0] imm_src = 3'bXXX;
 
     always_comb begin
       case (op) // read the opcode
@@ -46,7 +46,7 @@ module instruction_decoder(
         JTYPE:  imm_src <= 3'b011;
         UTYPE:  imm_src <= 3'b100;
         RTYPE:  imm_src <= 3'b111;
-        default:
+        //default:
       endcase
     end
 

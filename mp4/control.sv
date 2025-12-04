@@ -11,7 +11,7 @@ module control(
     output logic    mem_write,
     output logic    ir_write,
     input logic     clk,
-    input [31:0]    instr,
+    input logic [31:0]    instr,
     input logic     zero,
     input logic     carry,
     input logic     sign,
