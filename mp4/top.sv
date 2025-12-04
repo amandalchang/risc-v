@@ -2,6 +2,7 @@
 `include "immextend.sv"
 `include "register_file.sv"
 `include "control.sv"
+`include "alu.sv"
 
 module top (
     input logic clk, 
