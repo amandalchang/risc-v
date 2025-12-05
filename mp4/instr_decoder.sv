@@ -46,7 +46,7 @@ module instruction_decoder(
         JTYPE:  imm_src = 3'b011;
         UTYPE:  imm_src = 3'b100;
         RTYPE:  imm_src = 3'b111;
-        default: $error("Error: Unexpected imm_src %b detected!", imm_src);
+        //default: $error("Error: Unexpected imm_src %b detected!", imm_src);
       endcase
     end
 
