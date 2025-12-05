@@ -26,11 +26,11 @@ ALU op
 
 module ALU_decoder(
     input logic clk,
-    input [2:0] funct3,
+    input logic [2:0] funct3,
     input logic op_5,
     input logic funct7_5,
-    input [1:0] alu_op,
-    output [2:0] alu_control
+    input logic [1:0] alu_op,
+    output logic [2:0] alu_control
 );
     always_comb begin
         case (alu_op) // read the ALU opcode
