@@ -13,7 +13,7 @@ module register_file(
     output logic [31:0] rd2
 );
 
-logic [31:0] reg_data [31:0];
+logic [31:0] reg_data [0:31];
 
 logic [4:0] a1 = instr[19:15]; // Rs1
 logic [4:0] a2 = instr[24:20]; // Rs2
