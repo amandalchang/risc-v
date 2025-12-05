@@ -32,9 +32,6 @@ module ALU_decoder(
     input [1:0] alu_op,
     output [2:0] alu_control
 );
-
-    logic [2:0] alu_control = 3'bxxx;
-
     always_comb begin
         case (alu_op) // read the ALU opcode
             00: alu_control = 3'b000;

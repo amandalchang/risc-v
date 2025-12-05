@@ -90,7 +90,7 @@ module top (
         .clk             (clk),
         .instr           (imem_data_out),
         .write_en_3      (reg_write),
-        .result          (result),
+        .write_data_3    (result),
         .rd1             (rd1),
         .rd2             (rd2)
     );
