@@ -51,7 +51,7 @@ module top (
 
     memory #(
         .IMEM_INIT_FILE_PREFIX  ("rv32i_test")
-    ) u1 (
+    ) memory (
         .clk            (clk), 
         .funct3         (funct3), 
         .dmem_wren      (mem_write), 
@@ -67,7 +67,7 @@ module top (
         .blue           (blue)
     );
 
-    control u2 (
+    control control (
         .clk             (clk),
         .pc_write        (pc_write),
         .adr_src         (adr_src),
@@ -86,7 +86,7 @@ module top (
         .reg_write       (reg_write)
     );
 
-    register_file u3 (
+    register_file register_file (
         .clk             (clk),
         .instr           (imem_data_out),
         .write_en_3      (reg_write),
@@ -95,13 +95,13 @@ module top (
         .rd2             (rd2)
     );
 
-    imm_extend u4 (
+    imm_extend imm_extend (
         .instr           (imem_data_out),
         .imm_src         (imm_src),
         .imm_ext         (imm_ext) // flows to alu_src_b multiplexer
     );
 
-    alu u5 (
+    alu alu (
         .alu_control       (alu_control),
         .src_a             (src_a),
         .src_b             (src_b),

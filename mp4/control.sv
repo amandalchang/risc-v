@@ -198,7 +198,7 @@ module control(
         endcase
     end
 
-    ALU_decoder u0 (
+    ALU_decoder ALU_decoder (
         .clk            (clk), 
         .funct3         (funct3),
         .op_5           (opcode[5]),
@@ -208,7 +208,7 @@ module control(
 
     );
 
-    instruction_decoder u1 (
+    instruction_decoder instruction_decoder (
         .clk            (clk), 
         .op             (opcode),
         .imm_src        (imm_src)

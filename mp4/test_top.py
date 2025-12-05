@@ -21,10 +21,10 @@ async def test_cpu(dut):
         dut.memory.dmem2.memory.value,
         dut.memory.dmem3.memory.value,
     ]
-    pc = dut.program_counter
+    pc = dut.pc
 
 
     await ClockCycles(dut.clk, 370)
 
-    for i in range(len(regfile.value)):
-        print(f"Register {int(i)}: {hex(regfile.value[i])}")
+    for i in range(32):
+        print(f"Register {i}: {regfile.value[i]}")
