@@ -5,12 +5,12 @@
 // pg.395 harris and harris
 
 module register_file(
-    input  clk,
-    input  [31:0] instr,
-    input  write_en_3, // RegWrite from controller
-    input  [31:0] write_data_3, // Result from ALUOut
-    output [31:0] rd1,
-    output [31:0] rd2
+    input logic clk,
+    input logic [31:0] instr,
+    input logic write_en_3, // RegWrite from controller
+    input logic [31:0] write_data_3, // Result from ALUOut
+    output logic [31:0] rd1,
+    output logic [31:0] rd2
 );
 
 logic [31:0] reg_data [31:0];
