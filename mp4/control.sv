@@ -45,6 +45,7 @@ module control(
     localparam [6:0] EXECUTE_L = 7'b0010011;
     localparam [6:0] JAL = 7'b1101111;
     localparam [6:0] BRANCH = 7'b1100011;
+    localparam [6:0] LUI = 7'b0110111;
 
     localparam [2:0] MEMORY = 3'b011;
     localparam [6:0] MEMREAD = 7'b0000011;
@@ -164,6 +165,12 @@ module control(
                         alu_op = 2'b01;
                         result_src = 2'b00;
                         branch = 1'b1;
+                    end
+                    LUI: begin
+                        alu_src_b = 2'b01;
+                        alu_op = 2'b11;
+                        result_src  = 2'b10;
+                        reg_write = 1'b1;
                     end
                 endcase
             end

@@ -23,6 +23,7 @@ localparam SUB = 3'b001;
 localparam AND = 3'b010;
 localparam OR = 3'b011;
 localparam SLT = 3'b101; // SET_LESS_THAN
+localparam PASS = 3'b111;
 
 // logic [31:0] alu_result;
 logic [32:0] wide_result;
@@ -58,6 +59,8 @@ always_comb begin
             alu_result = (src_a | src_b);
         SLT:
             alu_result = (src_a < src_b); // HELP
+        PASS:
+            alu_result = src_b;
 
         default: alu_result = 32'b0;
     endcase
