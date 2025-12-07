@@ -90,6 +90,11 @@ module control(
     end
 
     always_comb begin
+        pc_update = 1'b0;
+        branch = 1'b0;
+        reg_write = 1'b0;
+        ir_write = 1'b0;
+        mem_write = 1'b0;
         // if it's time to increment
         case (current_state) // increment based on state
             FETCH: begin
@@ -160,11 +165,6 @@ module control(
                 endcase
             end
             MEMORY: begin
-                pc_update = 1'b0;
-                branch = 1'b0;
-                reg_write = 1'b0;
-                ir_write = 1'b0;
-                mem_write = 1'b0;
                 case(opcode)
                     MEMREAD: begin
                         result_src = 2'b00;
@@ -185,12 +185,6 @@ module control(
                 endcase
             end
             WRITE_BACK: begin
-                pc_update = 1'b0;
-                branch = 1'b0;
-                reg_write = 1'b0;
-                ir_write = 1'b0;
-                mem_write = 1'b0;
-
                 if (opcode == MEMWB) begin
                     result_src = 2'b01;
                     reg_write = 1'b1;

@@ -22,6 +22,7 @@ localparam ADD = 4'b0000;
 localparam SUB = 4'b0001;
 localparam AND = 4'b0010;
 localparam OR = 4'b0011;
+localparam XOR = 4'b1100;
 localparam SLT = 4'b0101; // SET_LESS_THAN
 localparam PASS = 4'b0111;
 localparam SHIFT_RIGHT_LOGIC = 4'b1000;
@@ -47,7 +48,8 @@ logic overflow_possible;
 // logic overflow;
 
 always_comb begin
-
+    alu_result = 32'b0;
+    wide_result = 33'b0;
     case (alu_control)
         ADD: begin
                 wide_result = {1'b0, src_a} + {1'b0, src_b};
@@ -65,11 +67,12 @@ always_comb begin
             alu_result = (src_a < src_b); // HELP
         PASS:
             alu_result = src_b;
+        XOR:
+            alu_result = src_a ^ src_b;
         SHIFT_RIGHT_LOGIC:
             alu_result = (src_a >> src_b);
         SHIFT_RIGHT_ARITH:
-            src_b[31:0] = 32'b0;
-            alu_result = (src_a >>> src_b);
+            alu_result = $signed(src_a) >>> (src_b & 5'b11111);
         SHIFT_LEFT:
             alu_result = (src_a << src_b);
         default: alu_result = 32'hXXXXXXXX;

@@ -41,6 +41,7 @@ module ALU_decoder(
     localparam SUB = 4'b0001;
     localparam AND = 4'b0010;
     localparam OR = 4'b0011;
+    localparam XOR = 4'b1100;
     localparam SLT = 4'b0101; // SET_LESS_THAN
     localparam PASS = 4'b0111;
     localparam SHIFT_RIGHT_LOGIC = 4'b1000;
@@ -64,11 +65,12 @@ module ALU_decoder(
                         3'b110: alu_control = OR;
                         3'b111: alu_control = AND;
                         3'b101: begin
-                            if (funct7_5 != 1'b1) begin
-                                alu_control = SHIFT_RIGHT_LOGIC;
-                            end else alu_control = SHIFT_RIGHT_ARITH;
+                            if (funct7_5 == 1'b1) begin
+                                alu_control = SHIFT_RIGHT_ARITH;
+                            end else alu_control = SHIFT_RIGHT_LOGIC;
                         end
                         3'b001: alu_control = SHIFT_LEFT;
+                        3'b100: alu_control = XOR;
                         default: alu_control = 4'bxxxx;
                     endcase
                 end
