@@ -67,6 +67,7 @@ module control(
     localparam [1:0] B_SELECT_IMM_EXT = 2'b01;
     localparam [1:0] B_SELECT_4 = 2'b10;
 
+    // alu_op localparams
     localparam [1:0] ADD = 2'b00;
     localparam [1:0] SUB = 2'b01;
     localparam [1:0] FUNCT3_DEPEND = 2'b10;
