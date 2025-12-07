@@ -32,10 +32,9 @@ module instruction_decoder(
     localparam [6:0] STYPE  = 7'b0100011;
     localparam [6:0] BTYPE  = 7'b1100011;
     localparam [6:0] JTYPE  = 7'b1101111;
-    localparam [6:0] UTYPE  = 7'b0110111;
+    localparam [6:0] LUI  = 7'b0110111;
+    localparam [6:0] AUIPC = 7'b0010111;
     localparam [6:0] RTYPE  = 7'b0110011;
-
-    //localparam [2:0] imm_src = 3'bXXX;
 
     always_comb begin
       case (op) // read the opcode
@@ -44,9 +43,10 @@ module instruction_decoder(
         STYPE:  imm_src = 3'b001;
         BTYPE:  imm_src = 3'b010;
         JTYPE:  imm_src = 3'b011;
-        UTYPE:  imm_src = 3'b100;
+        LUI:  imm_src = 3'b100;
+        AUIPC: imm_src = 3'b100;
         RTYPE:  imm_src = 3'b111;
-        //default: $error("Error: Unexpected imm_src %b detected!", imm_src);
+        default: imm_src = 3'bXXX;
       endcase
     end
 

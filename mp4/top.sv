@@ -12,7 +12,7 @@ module top (
     output logic RGB_B
 );
     logic [31:0] pc_next = 32'h1004;
-    logic [31:0] pc = 32'h1000; // beginning of imem addresses
+    logic [31:0] pc = 32'h1000;
     logic [31:0] old_pc = 32'd0;
     logic [31:0] store_instr = 32'd0;
     logic [31:0] store_data = 32'd0;
