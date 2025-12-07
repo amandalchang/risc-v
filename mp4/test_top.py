@@ -23,20 +23,18 @@ async def test_cpu(dut):
         dut.memory.dmem3.memory.value,
     ]
     pc = dut.pc
-    line = 12 # WE'RE ON 
-    for j in range(100):
+    line = 15 
+    for j in range(350):
         await ClockCycles(dut.clk, 1)
 
-        if j in range((line - 1) * 5, line * 5):
-        #if j <= (line*5 - 1):
+        #if j in range((line - 1) * 5, line * 5):
+        if j <= (line*5 - 1):
             # ----- REGISTER FILE PRINTS -----
-            for i in range(line):
+            for i in range(23):
                 try:
                     print(f"Register {i}: {hex(regfile.value[i])}")
                 except:
                     print(f"Register {i}: {regfile.value[i]}")
-
-            # ORDER MATCHED HERE ↓↓↓ (same order as your original block)
 
             # alu src a
             print(f"alu src a: {dut.control.alu_src_a.value}")
@@ -92,9 +90,9 @@ async def test_cpu(dut):
 
             # imem address
             try:
-                print(f"imem_address: {hex(dut.imem_address.value)}")
+                print(f"mem_address: {hex(dut.imem_address.value)}")
             except:
-                print(f"imem_address: {dut.imem_address.value}")
+                print(f"mem_address: {dut.imem_address.value}")
 
             # instruction
             try:

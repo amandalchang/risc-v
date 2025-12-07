@@ -52,7 +52,7 @@ module top (
     logic reg_write;
 
     memory #(
-        .IMEM_INIT_FILE_PREFIX  ("rv32i_test")
+        .IMEM_INIT_FILE_PREFIX  ("../rv32i_simplified")
     ) memory (
         .clk            (clk), 
         .funct3         (funct3), 
@@ -117,9 +117,6 @@ module top (
     always_ff @(posedge clk) begin // registers
         pc <= pc_next;
 
-        if (!adr_src)
-            imem_address <= pc;
-        else imem_address <= result;
         if (ir_write) begin
             store_instr <= imem_data_out;
             old_pc <= pc;
@@ -154,6 +151,14 @@ module top (
             2'b01: result = store_data;
             2'b10: result = alu_result;
         endcase
+
+        if (!adr_src) begin
+            imem_address <= pc;
+            dmem_address <= pc;
+        end else begin
+            imem_address <= result;
+            dmem_address <= result;
+        end
     end
 
 

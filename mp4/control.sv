@@ -43,7 +43,8 @@ module control(
     localparam [2:0] WRITE_BACK = 3'b100;
 
     // execute opcodes
-    localparam [6:0] MEMADR = 7'b0?00011;
+    localparam [6:0] LOAD = 7'b0000011;
+    localparam [6:0] STORE = 7'b0100011;
     localparam [6:0] EXECUTE_R = 7'b0110011;
     localparam [6:0] EXECUTE_I = 7'b0010011;
     localparam [6:0] JAL = 7'b1101111;
@@ -134,7 +135,7 @@ module control(
             end
             EXECUTE: begin
                 case(opcode)
-                    MEMADR: begin
+                    LOAD, STORE: begin
                         // state logic
                         alu_src_a = A_SELECT_RD1;
                         alu_src_b = B_SELECT_IMM_EXT;
@@ -180,6 +181,9 @@ module control(
                         result_src = 2'b10;
                         reg_write = 1'b1;
                     end
+                    default: begin
+                        // Do nothing
+                    end
                 endcase
             end
             MEMORY: begin
@@ -197,8 +201,11 @@ module control(
                         result_src = 2'b00;
                         reg_write = 1'b1;
                     end
+                    STORE: begin
+                        mem_write = 1'b1;
+                    end
                     default: begin
-                        // Do nothing
+                        // Do nothing; includes LOAD
                     end
                 endcase
             end
