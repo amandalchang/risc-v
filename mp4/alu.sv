@@ -24,6 +24,7 @@ localparam AND = 4'b0010;
 localparam OR = 4'b0011;
 localparam XOR = 4'b1100;
 localparam SLT = 4'b0101; // SET_LESS_THAN
+localparam SLTU = 4'b1101;
 localparam PASS = 4'b0111;
 localparam SHIFT_RIGHT_LOGIC = 4'b1000;
 localparam SHIFT_RIGHT_ARITH = 4'b1001;
@@ -64,6 +65,8 @@ always_comb begin
         OR:
             alu_result = (src_a | src_b);
         SLT:
+            alu_result = ($signed(src_a) < $signed(src_b));
+        SLTU:
             alu_result = (src_a < src_b); // HELP
         PASS:
             alu_result = src_b;
