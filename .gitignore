@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Cocotb / simulation build
+sim_build/
+**/sim_build/
+
+# Cocotb test results
+results.xml
+**/results.xml
+
+# Specific cocotb/cocotb-regress output
+error.yaml
+**/error.yaml
+
+# Any nested __pycache__ directories
+**/__pycache__/
+
+# ALU test folder specifics
+alu_test/__pycache__/
+alu_test/results.xml
+alu_test/sim_build/

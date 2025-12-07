@@ -39,7 +39,7 @@ module top (
     logic [31:0] src_a;
     logic [31:0] src_b;
     logic [1:0] result_src;
-    logic [2:0] alu_control;
+    logic [3:0] alu_control;
     logic [1:0] alu_src_a;
     logic [1:0] alu_src_b;
     logic [2:0] imm_src;
@@ -49,6 +49,7 @@ module top (
     logic [31:0] imm_ext;
     logic [31:0] alu_result;
     logic pc_write;
+    logic reg_write;
 
     memory #(
         .IMEM_INIT_FILE_PREFIX  ("rv32i_test")

@@ -7,7 +7,7 @@ References
 */
 
 module alu(
-    input logic [2:0] alu_control,
+    input logic [3:0] alu_control,
     input logic [31:0] src_a,
     input logic [31:0] src_b,
     output logic [31:0] alu_result,
@@ -18,12 +18,15 @@ module alu(
 );
 
 // ALUControl is 000 for addition, 001 for subtraction, 010 for AND, 011 for OR, and 101 for set less than.
-localparam ADD = 3'b000;
-localparam SUB = 3'b001;
-localparam AND = 3'b010;
-localparam OR = 3'b011;
-localparam SLT = 3'b101; // SET_LESS_THAN
-localparam PASS = 3'b111;
+localparam ADD = 4'b0000;
+localparam SUB = 4'b0001;
+localparam AND = 4'b0010;
+localparam OR = 4'b0011;
+localparam SLT = 4'b0101; // SET_LESS_THAN
+localparam PASS = 4'b0111;
+localparam SHIFT_RIGHT_LOGIC = 4'b1000;
+localparam SHIFT_RIGHT_ARITH = 4'b1001;
+localparam SHIFT_LEFT = 4'b1010;
 
 // logic [31:0] alu_result;
 logic [32:0] wide_result;
@@ -44,6 +47,7 @@ logic overflow_possible;
 // logic overflow;
 
 always_comb begin
+
     case (alu_control)
         ADD: begin
                 wide_result = {1'b0, src_a} + {1'b0, src_b};
@@ -61,8 +65,14 @@ always_comb begin
             alu_result = (src_a < src_b); // HELP
         PASS:
             alu_result = src_b;
-
-        default: alu_result = 32'b0;
+        SHIFT_RIGHT_LOGIC:
+            alu_result = (src_a >> src_b);
+        SHIFT_RIGHT_ARITH:
+            src_b[31:0] = 32'b0;
+            alu_result = (src_a >>> src_b);
+        SHIFT_LEFT:
+            alu_result = (src_a << src_b);
+        default: alu_result = 32'hXXXXXXXX;
     endcase
 
     overflow_possible = (((src_a[31] == src_b[31]) & alu_control == ADD) | ((src_a[31] != src_b[31]) & alu_control == SUB));

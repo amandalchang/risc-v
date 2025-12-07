@@ -17,7 +17,7 @@ module control(
     input logic     sign,
     input logic     overflow,
     output logic    [1:0] result_src,
-    output logic    [2:0] alu_control,
+    output logic    [3:0] alu_control,
     output logic    [1:0] alu_src_b,
     output logic    [1:0] alu_src_a,
     output logic    [2:0] imm_src,
@@ -42,7 +42,7 @@ module control(
     localparam [2:0] EXECUTE = 3'b010;
     localparam [6:0] MEMADR = 7'b0_00011;
     localparam [6:0] EXECUTE_R = 7'b0110011;
-    localparam [6:0] EXECUTE_L = 7'b0010011;
+    localparam [6:0] EXECUTE_I = 7'b0010011;
     localparam [6:0] JAL = 7'b1101111;
     localparam [6:0] BRANCH = 7'b1100011;
     localparam [6:0] LUI = 7'b0110111;
@@ -129,7 +129,7 @@ module control(
                         alu_src_b = 2'b00;
                         alu_op = 2'b10;
                     end
-                    EXECUTE_L: begin
+                    EXECUTE_I: begin
                         // state logic
                         alu_src_a = 2'b10;
                         alu_src_b = 2'b01;
@@ -160,6 +160,11 @@ module control(
                 endcase
             end
             MEMORY: begin
+                pc_update = 1'b0;
+                branch = 1'b0;
+                reg_write = 1'b0;
+                ir_write = 1'b0;
+                mem_write = 1'b0;
                 case(opcode)
                     MEMREAD: begin
                         result_src = 2'b00;
@@ -170,22 +175,26 @@ module control(
                         adr_src = 1'b1;
                         mem_write = 1'b1;
                     end
-                    EXECUTE_R, EXECUTE_L, JAL: begin // ALUWB
+                    EXECUTE_R, EXECUTE_I, JAL: begin // ALUWB
                         result_src = 2'b00;
                         reg_write = 1'b1;
+                    end
+                    default: begin
+                        // Do nothing
                     end
                 endcase
             end
             WRITE_BACK: begin
-                case(opcode)
-                    MEMWB: begin
-                        result_src = 2'b01;
-                        reg_write = 1'b1;
-                    end
-                    default: begin
-                        // do nothing
-                    end
-                endcase
+                pc_update = 1'b0;
+                branch = 1'b0;
+                reg_write = 1'b0;
+                ir_write = 1'b0;
+                mem_write = 1'b0;
+
+                if (opcode == MEMWB) begin
+                    result_src = 2'b01;
+                    reg_write = 1'b1;
+                end
             end
         endcase
     end
