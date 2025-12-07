@@ -23,7 +23,7 @@
                                 # 
     jalr  x14, 0(x13)           # x14 = 0x60
     addi  x17, x0, 0xC0         # x17 = 0xC0
-    addi  x24, x0, 0x100        # x24 = safe base pointer = 0x100
+    addi  x24, x0, 0x1000        # x24 = safe base pointer = 0x1000
     sb    x17, -4(x24)          # store to 0x100 - 4 = 0xFC
     sb    x17, -3(x24)          # store to 0xFD
     sb    x17, -2(x24)          # store to 0xFE
