@@ -23,7 +23,7 @@ async def test_cpu(dut):
         dut.memory.dmem3.memory.value,
     ]
     pc = dut.pc
-    line = 11
+    line = 11 # WE'RE ON 
     for j in range(100):
         await ClockCycles(dut.clk, 1)
 

@@ -5,6 +5,7 @@ __pycache__/
 # Cocotb / simulation build
 sim_build/
 **/sim_build/
+sim_build*
 
 # Cocotb test results
 results.xml
