@@ -80,21 +80,6 @@ module control(
 //          and the adder is performing subtraction (ALUControl0 = 1). 
     
 
-    always_comb begin
-        if (pc_update) begin
-            pc_write = 1'b1;
-        end
-        else if (branch) begin
-            case (funct3)
-                3'b000: pc_write = zero; // BEQ
-                3'b001: pc_write = !zero; // BNEQ
-                3'b100: pc_write = overflow ? ~sign: sign; // BLT
-                3'b101: pc_write = overflow ? sign: ~sign; // BGE
-                3'b110: pc_write = carry; // BLTU
-                3'b111: pc_write = !carry; // BGEU
-            endcase
-        end
-    end
 
     always_ff @(posedge clk) begin
         if (current_state == WRITE_BACK) begin
@@ -203,6 +188,20 @@ module control(
                 endcase
             end
         endcase
+    end
+
+    always_comb begin
+        pc_write = pc_update;
+        if (branch) begin
+            case (funct3)
+                3'b000: pc_write = zero; // BEQ
+                3'b001: pc_write = !zero; // BNEQ
+                3'b100: pc_write = overflow ? ~sign: sign; // BLT
+                3'b101: pc_write = overflow ? sign: ~sign; // BGE
+                3'b110: pc_write = carry; // BLTU
+                3'b111: pc_write = !carry; // BGEU
+            endcase
+        end
     end
 
     ALU_decoder ALU_decoder (

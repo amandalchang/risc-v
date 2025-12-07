@@ -11,7 +11,7 @@ module top (
     output logic RGB_G, 
     output logic RGB_B
 );
-    logic [31:0] pc_next = 32'h1000;
+    logic [31:0] pc_next = 32'h1004;
     logic [31:0] pc = 32'h1000; // beginning of imem addresses
     logic [31:0] old_pc = 32'd0;
     logic [31:0] store_instr = 32'd0;
@@ -112,7 +112,7 @@ module top (
         .overflow          (overflow)
     );
 
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk) begin // registers
         pc <= pc_next;
 
         if (!adr_src)
@@ -123,34 +123,37 @@ module top (
             old_pc <= pc;
         end
         else store_data <= dmem_data_out;
-
-        rd1_data <= rd1;
-        rd2_data <= rd2;
-
-        case (alu_src_a)
-            2'b00: src_a <= pc;
-            2'b01: src_a <= old_pc;
-            2'b10: src_a <= rd1_data;
-        endcase
-
-        case (alu_src_b)
-            2'b00: src_b <= rd2_data;
-            2'b01: src_b <= imm_ext;
-            2'b10: src_b <= 31'h4;
-        endcase
         
         alu_reg <= alu_result;
-
-        case (result_src)
-            2'b00: result <= alu_reg;
-            2'b01: result <= store_data;
-            2'b10: result <= alu_result;
-        endcase
 
         if (pc_write)
             pc_next <= result;
 
     end
+
+    always_comb begin
+        rd1_data = rd1;
+        rd2_data = rd2;
+
+        case (alu_src_a)
+            2'b00: src_a = pc;
+            2'b01: src_a = old_pc;
+            2'b10: src_a = rd1_data;
+        endcase
+
+        case (alu_src_b)
+            2'b00: src_b = rd2_data;
+            2'b01: src_b = imm_ext;
+            2'b10: src_b = 31'h4;
+        endcase
+
+        case (result_src)
+            2'b00: result = alu_reg;
+            2'b01: result = store_data;
+            2'b10: result = alu_result;
+        endcase
+    end
+
 
     assign LED = ~led;
     assign RGB_R = ~red;

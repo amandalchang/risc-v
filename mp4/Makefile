@@ -22,6 +22,7 @@ include $(shell cocotb-config --makefiles)/Makefile.sim
 
 
 # filename = top
+# testbench_filename = mp4_tb.sv
 # pcf_file = ../common/iceBlinkPico.pcf
 
 # build:
