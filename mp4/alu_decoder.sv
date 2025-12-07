@@ -33,22 +33,24 @@ module ALU_decoder(
     input logic [1:0] alu_op,
     output logic [2:0] alu_control
 );
+
+    
     always_comb begin
         case (alu_op) // read the ALU opcode
-            11: alu_control = 3'b111;
-            00: alu_control = 3'b000;
-            01: alu_control = 3'b001;
-            10: begin
+            2'b11: alu_control = 3'b111;
+            2'b00: alu_control = 3'b000;
+            2'b01: alu_control = 3'b001;
+            2'b10: begin
                     case (funct3)
-                        000: begin
+                        3'b000: begin
                             case ({op_5, funct7_5})
-                                11: alu_control = 3'b000;
+                                2'b11: alu_control = 3'b000;
                                 default: alu_control = 3'b000; // 00, 01, 10
                             endcase
                         end
-                        010: alu_control = 3'b101;
-                        110: alu_control = 3'b011;
-                        111: alu_control = 3'b010;
+                        3'b010: alu_control = 3'b101;
+                        3'b110: alu_control = 3'b011;
+                        3'b111: alu_control = 3'b010;
                         default: alu_control = 3'bxxx;
                     endcase
                 end

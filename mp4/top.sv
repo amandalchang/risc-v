@@ -48,6 +48,7 @@ module top (
     logic [31:0] rd2;
     logic [31:0] imm_ext;
     logic [31:0] alu_result;
+    logic pc_write;
 
     memory #(
         .IMEM_INIT_FILE_PREFIX  ("rv32i_test")
