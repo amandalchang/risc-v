@@ -11,7 +11,7 @@ module control(
     output logic    mem_write,
     output logic    ir_write,
     input logic     clk,
-    input logic [31:0]    instr,
+    input logic     [31:0] instr,
     input logic     zero,
     input logic     carry,
     input logic     sign,
@@ -35,33 +35,44 @@ module control(
     logic pc_update = 1'b0;
     logic branch = 1'b0;
     logic [1:0] alu_op;
-    // State variables; naming is defined by starting color
+    // State variables
     localparam [2:0] FETCH = 3'b000;
     localparam [2:0] DECODE = 3'b001;
-
     localparam [2:0] EXECUTE = 3'b010;
-    localparam [6:0] MEMADR = 7'b0_00011;
+    localparam [2:0] MEMORY = 3'b011;
+    localparam [2:0] WRITE_BACK = 3'b100;
+
+    // execute opcodes
+    localparam [6:0] MEMADR = 7'b0?00011;
     localparam [6:0] EXECUTE_R = 7'b0110011;
     localparam [6:0] EXECUTE_I = 7'b0010011;
     localparam [6:0] JAL = 7'b1101111;
     localparam [6:0] BRANCH = 7'b1100011;
-    localparam [6:0] LUI = 7'b0110111;
+    localparam [6:0] EXECUTE_LUI = 7'b0110111;
+    localparam [6:0] EXECUTE_AUIPC = 7'b0010111;
 
-    localparam [2:0] MEMORY = 3'b011;
+    // memory opcodes
     localparam [6:0] MEMREAD = 7'b0000011;
     localparam [6:0] MEMWRITE = 7'b0100011;
-    // localparam [6:0] ALUWB = 
-    // 1100011 Non ALUWB codes
-    // 0000011
-    // 0100011
-    
-    // 0110011 These are the ALUWB codes
-    // 0010011
-    // 1101111
 
-    localparam [2:0] WRITE_BACK = 3'b100;
+    // writeback opcode
     localparam [6:0] MEMWB = MEMREAD;
     
+    // alu_src_a and alu_src_b localparams
+    localparam [1:0] A_SELECT_PC = 2'b00;
+    localparam [1:0] A_SELECT_OLD_PC = 2'b01;
+    localparam [1:0] A_SELECT_RD1 = 2'b10;
+
+    localparam [1:0] B_SELECT_RD2 = 2'b00;
+    localparam [1:0] B_SELECT_IMM_EXT = 2'b01;
+    localparam [1:0] B_SELECT_4 = 2'b10;
+
+    localparam [1:0] ADD = 2'b00;
+    localparam [1:0] SUB = 2'b01;
+    localparam [1:0] FUNCT3_DEPEND = 2'b10;
+    localparam [1:0] PASS = 2'b11;
+
+
     // Declare state variables
     logic [2:0] current_state = FETCH;
 
@@ -105,9 +116,9 @@ module control(
                 // state logic
                 adr_src = 1'b0;
                 ir_write = 1'b1;
-                alu_src_a = 2'b00; // pc
-                alu_src_b = 2'b10; // 4
-                alu_op = 2'b00; // ADD
+                alu_src_a = A_SELECT_PC; // pc
+                alu_src_b = B_SELECT_4; // 4
+                alu_op = ADD; // ADD
                 result_src = 2'b10; // from ALUResult
                 pc_update = 1'b1; // prep for jump/branch
             end
@@ -116,50 +127,56 @@ module control(
                 ir_write = 1'b0;
                 pc_update = 1'b0;
                 // state logic
-                alu_src_a = 2'b01;
-                alu_src_b = 2'b01;
-                alu_op = 2'b00;
+                alu_src_a = A_SELECT_OLD_PC;
+                alu_src_b = B_SELECT_IMM_EXT;
+                alu_op = ADD;
             end
             EXECUTE: begin
                 case(opcode)
                     MEMADR: begin
                         // state logic
-                        alu_src_a = 2'b10;
-                        alu_src_b = 2'b01;
-                        alu_op = 2'b00;
+                        alu_src_a = A_SELECT_RD1;
+                        alu_src_b = B_SELECT_IMM_EXT;
+                        alu_op = ADD;
                     end
                     EXECUTE_R: begin
                         // state logic
-                        alu_src_a = 2'b10;
-                        alu_src_b = 2'b00;
-                        alu_op = 2'b10;
+                        alu_src_a = A_SELECT_RD1;
+                        alu_src_b = B_SELECT_RD2;
+                        alu_op = FUNCT3_DEPEND;
                     end
                     EXECUTE_I: begin
                         // state logic
-                        alu_src_a = 2'b10;
-                        alu_src_b = 2'b01;
-                        alu_op = 2'b10;
+                        alu_src_a = A_SELECT_RD1;
+                        alu_src_b = B_SELECT_IMM_EXT;
+                        alu_op = FUNCT3_DEPEND;
                     end
                     JAL: begin
                         // state logic
-                        alu_src_a = 2'b01;
-                        alu_src_b = 2'b10;
-                        alu_op = 2'b00;
+                        alu_src_a = A_SELECT_OLD_PC;
+                        alu_src_b = B_SELECT_4;
+                        alu_op = ADD;
                         result_src = 2'b00;
                         pc_update = 1'b1;
                     end
                     BRANCH: begin
                         // state logic
-                        alu_src_a = 2'b10;
-                        alu_src_b = 2'b00;
-                        alu_op = 2'b01;
+                        alu_src_a = A_SELECT_RD1;
+                        alu_src_b = B_SELECT_RD2;
+                        alu_op = SUB;
                         result_src = 2'b00;
                         branch = 1'b1;
                     end
-                    LUI: begin
-                        alu_src_b = 2'b01;
-                        alu_op = 2'b11;
-                        result_src  = 2'b10;
+                    EXECUTE_LUI: begin
+                        alu_src_b = B_SELECT_IMM_EXT;
+                        alu_op = PASS;
+                        result_src = 2'b10;
+                        reg_write = 1'b1;
+                    end
+                    EXECUTE_AUIPC: begin
+                        alu_src_b = B_SELECT_IMM_EXT;
+                        alu_op = ADD;
+                        result_src = 2'b10;
                         reg_write = 1'b1;
                     end
                 endcase
