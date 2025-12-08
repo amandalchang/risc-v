@@ -15,7 +15,7 @@ module top (
     logic [31:0] pc = 32'h1000;
     logic [31:0] old_pc = 32'd0;
     logic [31:0] store_instr = 32'd0;
-    logic [31:0] store_data = 32'd0;
+    logic [31:0] dmem_data_out;
     logic [31:0] rd1_data = 32'd0;
     logic [31:0] rd2_data = 32'd0;
     logic [31:0] alu_reg = 32'd0;
@@ -24,8 +24,6 @@ module top (
     logic [2:0] funct3 = 3'b010;
     logic dmem_wren = 1'b0;
     logic [31:0] dmem_address = 32'd0;
-    logic [31:0] dmem_data_in = 32'd0;
-    logic [31:0] dmem_data_out;
     logic [31:0] imem_address = 32'h1000;
     logic [31:0] imem_data_out;
 
@@ -58,7 +56,7 @@ module top (
         .funct3         (funct3), 
         .dmem_wren      (mem_write), 
         .dmem_address   (dmem_address), 
-        .dmem_data_in   (dmem_data_in), 
+        .dmem_data_in   (rd2_data), 
         .imem_address   (imem_address), 
         .imem_data_out  (imem_data_out), 
         .dmem_data_out  (dmem_data_out), 
@@ -125,8 +123,6 @@ module top (
             old_pc <= pc;
         end
 
-        store_data <= dmem_data_out;
-
         alu_reg <= alu_result;
 
         if (pc_write)
@@ -149,17 +145,17 @@ module top (
 
         case (result_src)
             2'b00: result = alu_reg;
-            2'b01: result = store_data;
+            2'b01: result = dmem_data_out;
             2'b10: result = alu_result;
         endcase
 
-        if (!adr_src) begin
-            imem_address <= pc;
-            dmem_address <= pc;
-        end else begin
-            imem_address <= result;
+        imem_address <= pc;
+
+        // data memory uses ALU result when adr_src = 1
+        if (adr_src)
             dmem_address <= result;
-        end
+        else
+            dmem_address <= pc;
     end
 
 
