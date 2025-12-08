@@ -23,14 +23,16 @@ async def test_cpu(dut):
         dut.memory.dmem3.memory.value,
     ]
     pc = dut.pc
-    line = 2
+    line = 21
     for j in range(350):
         await ClockCycles(dut.clk, 1)
 
         #if j in range((line - 1) * 5, line * 5):
         if j <= (line*5 - 1):
+            
+            
             # ----- REGISTER FILE PRINTS -----
-            for i in range(23):
+            for i in range(32):
                 try:
                     print(f"Register {i}: {hex(regfile.value[i])}")
                 except:
@@ -56,7 +58,12 @@ async def test_cpu(dut):
                 print(f"src b: {dut.src_b.value}")
 
             print(f"imm_src: {dut.imm_src.value}")
-
+            
+            try:
+                print(f"imm ext: {hex(dut.imm_ext.value)}")
+            except:
+                print(f"imm ext: {dut.imm_ext.value}")
+            
             print(f"adr_src: {dut.control.adr_src.value}")
             print(f"ir_write: {dut.control.ir_write.value}")
             print(f"alu op: {dut.control.ALU_decoder.alu_op.value}")
@@ -101,6 +108,24 @@ async def test_cpu(dut):
                 print(f"imem data out: {hex(dut.imem_data_out.value)}")
             except:
                 print(f"imem data out: {dut.imem_data_out.value}")
+            
+            # rd2 data
+            try:
+                print(f"rd2data: {hex(dut.rd2_data.value)}")
+            except:
+                print(f"rd2data: {dut.rd2_data.value}")
+
+            # # rd2 data
+            # try:
+            #     print(f"data mem in: {hex(dut.memory.dmem_data_in.value)}")
+            # except:
+            #     print(f"data mem in: {dut.memory.dmem_data_in.value}")
+            
+            # dmem data out
+            try:
+                print(f"dmem data out: {hex(dut.dmem_data_out.value)}")
+            except:
+                print(f"dmem data out: {dut.dmem_data_out.value}")
 
             # store instr
             try:
