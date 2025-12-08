@@ -52,7 +52,7 @@ module top (
     logic reg_write;
 
     memory #(
-        .IMEM_INIT_FILE_PREFIX  ("../rv32i_simplified")
+        .IMEM_INIT_FILE_PREFIX  ("/corrected_test/rv32i_test_corrected")
     ) memory (
         .clk            (clk), 
         .funct3         (funct3), 
