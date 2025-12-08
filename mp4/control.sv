@@ -202,6 +202,8 @@ module control(
                         reg_write = 1'b1;
                     end
                     STORE: begin
+                        result_src = 2'b00;
+                        adr_src = 1'b1;
                         mem_write = 1'b1;
                     end
                     default: begin
