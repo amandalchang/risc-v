@@ -135,11 +135,17 @@ module control(
             end
             EXECUTE: begin
                 case(opcode)
-                    LOAD, STORE: begin
+                    LOAD: begin
                         // state logic
                         alu_src_a = A_SELECT_RD1;
                         alu_src_b = B_SELECT_IMM_EXT;
                         alu_op = ADD;
+                    end
+                    STORE: begin
+                        alu_src_a = A_SELECT_RD1;
+                        alu_src_b = B_SELECT_IMM_EXT;
+                        alu_op = ADD;
+                        adr_src = 1'b1;
                     end
                     EXECUTE_R: begin
                         // state logic

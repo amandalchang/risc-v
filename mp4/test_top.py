@@ -23,14 +23,14 @@ async def test_cpu(dut):
         dut.memory.dmem3.memory.value,
     ]
     pc = dut.pc
-    line = 21
+    line = 18
     for j in range(350):
         await ClockCycles(dut.clk, 1)
 
         #if j in range((line - 1) * 5, line * 5):
         if j <= (line*5 - 1):
             
-            
+
             # ----- REGISTER FILE PRINTS -----
             for i in range(32):
                 try:
@@ -97,11 +97,18 @@ async def test_cpu(dut):
             except:
                 print(f"{dut.pc_next.value} pc next")
 
+            # dmem address
+            try:
+                print(f"dmem_address: {hex(dut.dmem_address.value)}")
+            except:
+                print(f"dmem_address: {dut.dmem_address.value}")
+
+
             # imem address
             try:
-                print(f"mem_address: {hex(dut.imem_address.value)}")
+                print(f"imem_address: {hex(dut.imem_address.value)}")
             except:
-                print(f"mem_address: {dut.imem_address.value}")
+                print(f"imem_address: {dut.imem_address.value}")
 
             # imem data out
             try:
@@ -143,4 +150,12 @@ async def test_cpu(dut):
                 print(f"result (aka WD3): {dut.result.value}")
 
             print(f"Rd: {dut.register_file.a3.value}")
-            print(f"FSM state: {dut.control.current_state.value}\n\n")
+            print(f"FSM state: {dut.control.current_state.value}")\
+            
+            dmem_ffc = [
+                dut.memory.dmem0.memory[0b1111111111].value,
+                dut.memory.dmem1.memory[0b1111111111].value,
+                dut.memory.dmem2.memory[0b1111111111].value,
+                dut.memory.dmem3.memory[0b1111111111].value,
+            ]
+            print(f"data memory: {dmem_ffc}\n\n")
