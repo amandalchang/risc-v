@@ -117,6 +117,9 @@ module top (
     always_ff @(posedge clk) begin // registers
         pc <= pc_next;
 
+        rd1_data = rd1;
+        rd2_data = rd2;
+
         if (ir_write) begin
             store_instr <= imem_data_out;
             old_pc <= pc;
@@ -131,9 +134,6 @@ module top (
     end
 
     always_comb begin
-        rd1_data = rd1;
-        rd2_data = rd2;
-
         case (alu_src_a)
             2'b00: src_a = pc;
             2'b01: src_a = old_pc;
