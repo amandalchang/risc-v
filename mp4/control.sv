@@ -126,7 +126,7 @@ module control(
             end
             DECODE: begin
                 // reset enables
-                ir_write = 1'b0;
+                ir_write = 1'b1;
                 pc_update = 1'b0;
                 // state logic
                 alu_src_a = A_SELECT_OLD_PC;

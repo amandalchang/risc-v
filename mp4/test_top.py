@@ -23,7 +23,7 @@ async def test_cpu(dut):
         dut.memory.dmem3.memory.value,
     ]
     pc = dut.pc
-    line = 10 
+    line = 2
     for j in range(350):
         await ClockCycles(dut.clk, 1)
 
@@ -40,6 +40,8 @@ async def test_cpu(dut):
             print(f"alu src a: {dut.control.alu_src_a.value}")
             print(f"alu src b: {dut.control.alu_src_b.value}")
             print(f"branch: {dut.control.branch.value}")
+
+            print(f"mem write: {dut.mem_write.value}")
 
             # src a (hex if possible)
             try:
@@ -94,11 +96,18 @@ async def test_cpu(dut):
             except:
                 print(f"mem_address: {dut.imem_address.value}")
 
-            # instruction
+            # imem data out
             try:
-                print(f"instr: {hex(dut.register_file.instr.value)}")
+                print(f"imem data out: {hex(dut.imem_data_out.value)}")
             except:
-                print(f"instr: {dut.register_file.instr.value}")
+                print(f"imem data out: {dut.imem_data_out.value}")
+
+            # store instr
+            try:
+                print(f"store instr: {hex(dut.store_instr.value)}")
+            except:
+                print(f"store instr: {dut.store_instr.value}")
+
 
             print(f"reg write: {dut.reg_write.value}")
 

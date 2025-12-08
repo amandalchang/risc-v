@@ -52,7 +52,7 @@ module top (
     logic reg_write;
 
     memory #(
-        .IMEM_INIT_FILE_PREFIX  ("/corrected_test/rv32i_test_corrected")
+        .IMEM_INIT_FILE_PREFIX  ("rv32i_test")
     ) memory (
         .clk            (clk), 
         .funct3         (funct3), 
@@ -75,7 +75,7 @@ module top (
         .adr_src         (adr_src),
         .mem_write       (mem_write),
         .ir_write        (ir_write),
-        .instr           (imem_data_out),
+        .instr           (store_instr),
         .zero            (zero),
         .carry           (carry),
         .sign            (sign),
@@ -90,7 +90,7 @@ module top (
 
     register_file register_file (
         .clk             (clk),
-        .instr           (imem_data_out),
+        .instr           (store_instr),
         .write_en_3      (reg_write),
         .write_data_3    (result),
         .rd1             (rd1),
@@ -98,7 +98,7 @@ module top (
     );
 
     imm_extend imm_extend (
-        .instr           (imem_data_out),
+        .instr           (store_instr),
         .imm_src         (imm_src),
         .imm_ext         (imm_ext) // flows to alu_src_b multiplexer
     );
@@ -117,15 +117,16 @@ module top (
     always_ff @(posedge clk) begin // registers
         pc <= pc_next;
 
-        rd1_data = rd1;
-        rd2_data = rd2;
+        rd1_data <= rd1;
+        rd2_data <= rd2;
 
         if (ir_write) begin
             store_instr <= imem_data_out;
             old_pc <= pc;
         end
-        else store_data <= dmem_data_out;
-        
+
+        store_data <= dmem_data_out;
+
         alu_reg <= alu_result;
 
         if (pc_write)

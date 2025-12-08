@@ -1,5 +1,5 @@
     lui   x1, 0xFEDCC            # pc = 0x00, x1 = 0xFEDCC000
-    addi  x1, x1, 0xA98          # pc = 0x04, x1 = 0xFEDCBA98
+    addi  x1, x1, 0xA98         # pc = 0x04, x1 = 0xFEDCBA98
     srli  x2, x1, 4              # pc = 0x08, x2 = 0x0FEDCBA9
     srai  x3, x1, 4              # pc = 0x0C, x3 = 0xFFEDCBA9
     xori  x4, x3, -1             # pc = 0x10, x4 = 0x00123456
