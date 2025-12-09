@@ -131,12 +131,6 @@ async def test_cpu(dut):
                 print(f"rd2data: {hex(dut.rd2_data.value)}")
             except:
                 print(f"rd2data: {dut.rd2_data.value}")
-
-            # # rd2 data
-            # try:
-            #     print(f"data mem in: {hex(dut.memory.dmem_data_in.value)}")
-            # except:
-            #     print(f"data mem in: {dut.memory.dmem_data_in.value}")
             
             # dmem data out
             try:

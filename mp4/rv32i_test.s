@@ -18,7 +18,7 @@
     addi  x15, x15, -1           # pc = 0x1044
     jal   x16, -8                # pc = 0x1048, x16 = 0x00000040
     bltu  x3, x4, 8              # pc = 0x104C wont branch bc x3 is neg
-    blt   x3, x4, 20             # pc = 0x1050 will branch to 0x1064 bc x3 is neg
+    blt   x3, x4, 68             # pc = 0x1050 will branch to 0x1064 bc x3 is neg
                                  # pc = 0x1054
                                  # pc = 0x1058
                                  # pc = 0x105C
@@ -34,4 +34,5 @@
     lhu   x21, -4(x24)           # pc = 0x1084, x21 = 0x0000C0C0
     lb    x22, -4(x24)           # pc = 0x1088, x22 = 0xFFFFFFC0
     lbu   x23, -4(x24)           # pc = 0x108C, x23 = 0x000000C0 # end of load block
-    jalr  x25, 0(x13)             # pc = 0x1090, jump back to 0x3C (no link)
+    jalr  x25, 0(x13)            # pc = 0x1090, jump back to 0x3C (no link)
+                                 # pc = 0x1094 :DD It jumps here after line 21 to finish (no ecall though)
