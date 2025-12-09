@@ -13,8 +13,8 @@ module alu(
     output logic [31:0] alu_result,
     output logic zero,
     output logic carry,
-    output logic sign,
-    output logic overflow
+    output logic negative,
+    output logic overflow // not in use but for simulation
 );
 
 // ALUControl is 000 for addition, 001 for subtraction, 010 for AND, 011 for OR, and 101 for set less than.
@@ -38,11 +38,11 @@ logic [32:0] wide_result;
 //          and the ALU is performing addition or subtraction (indicated by ALUControl1 = 0).
 // logic zero;
 // logic carry;
-// logic sign;
+// logic negative;
 // WHEN THESE 3 THINGS ARE TRUE
 // (1) the ALU is performing addition or subtraction (ALUControl1 = 0)
 // (2) A and Sum have opposite signs, as detected by the XOR gate
-// (3) overflow is possible. That is, as detected by the XNOR gate, either A and B have the same sign 
+// (3) overflow is possible. That is, as detected by the XNOR gate, either A and B have the same negative 
 //          and the adder is performing addition (ALUControl0 = 0) or A and B have opposite signs 
 //          and the adder is performing subtraction (ALUControl0 = 1). 
 logic overflow_possible;
@@ -85,7 +85,7 @@ always_comb begin
 
     zero = (alu_result == 32'b0);
     carry = ((alu_control == (ADD | SUB)) & (wide_result[32] == 1));
-    sign = (alu_result[31] == 1);
+    negative = (alu_result[31] == 1);
     overflow = ((alu_control == (ADD | SUB)) & (src_a[31] != (src_a + src_b)) & (overflow_possible == 1));
 end
 endmodule

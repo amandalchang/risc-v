@@ -76,7 +76,7 @@ module top (
         .instr           (store_instr),
         .zero            (zero),
         .carry           (carry),
-        .sign            (sign),
+        .negative        (negative),
         .overflow        (overflow),
         .result_src      (result_src),
         .alu_control     (alu_control),
@@ -108,7 +108,7 @@ module top (
         .alu_result        (alu_result),
         .zero              (zero),
         .carry             (carry),
-        .sign              (sign),
+        .negative          (negative),
         .overflow          (overflow)
     );
 

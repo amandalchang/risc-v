@@ -18,7 +18,7 @@
     addi  x15, x15, -1           # pc = 0x1044
     jal   x16, -8                # pc = 0x1048, x16 = 0x00000040
     bltu  x3, x4, 8              # pc = 0x104C wont branch bc x3 is neg
-    blt   x3, x4, 20             # pc = 0x1050 will branch bc x3 is read as big number
+    blt   x3, x4, 20             # pc = 0x1050 will branch to 0x1064 bc x3 is neg
                                  # pc = 0x1054
                                  # pc = 0x1058
                                  # pc = 0x105C

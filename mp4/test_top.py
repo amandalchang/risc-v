@@ -24,7 +24,7 @@ async def test_cpu(dut):
     ]
     pc = dut.pc
     # line 59 is beq x15 branch true (first time the comparison is 0)
-    line = 61 # x15 = 0x8 line 33, right before jal second run
+    line = 62 # x15 = 0x8 line 33, right before jal second run
     for j in range(line*5):
         await ClockCycles(dut.clk, 1)
 
@@ -38,6 +38,10 @@ async def test_cpu(dut):
                 except:
                     print(f"Register {i}: {regfile.value[i]}")
 
+            print(f"zero: {dut.zero}")
+            print(f"carry {dut.carry}")
+            print(f"negative {dut.negative}")
+            print(f"overflow: {dut.overflow}")
             # alu src a
             print(f"alu src a: {dut.control.alu_src_a.value}")
             print(f"alu src b: {dut.control.alu_src_b.value}")
