@@ -13,10 +13,12 @@ STATE_NAMES = {
 @cocotb.test()
 async def test_cpu(dut):
     """Run CPU and print registers every cycle."""
+    ISOLATED_INSTRUCTION_PRINT = False
     verbose = True # prints out everything if true, if false only prints regfile
     # line 59 is beq x15 branch true (first time the comparison is 0)
-    line = 21 # x15 = 0x8 line 33, right before jal second run
-    line = 21 # How many instructions in we are (line*5 = clock cycles)
+    # x15 = 0x8 line 33, right before jal second run
+    # all the instructions finish by 61, but you can put more lines
+    line = 61 # How many instructions in we are (line*5 = clock cycles)
 
     def try_hex(val):
         try:
@@ -33,10 +35,11 @@ async def test_cpu(dut):
     for j in range(line*5):
         await ClockCycles(dut.clk, 1)
 
-        isolated_line = j in range((line - 1) * 5, line * 5) # prints the output of that specific line
-        up_to_line = j <= (line*5 - 1) # prints the output of everything up until that command
+        print_lines = j <= (line*5 - 1) # prints the output of everything up until that command
+        if (ISOLATED_INSTRUCTION_PRINT):
+            print_lines = j in range((line - 1) * 5, line * 5) # prints the output of that specific line
 
-        if (isolated_line): # Change what's in here to pick out what you're printing to
+        if (print_lines): # Change what's in here to pick out what you're printing to
             state_val = int(dut.control.current_state.value)
             state_name = STATE_NAMES.get(state_val, "UNKNOWN")
             print(f"\n\n=========== FSM: {state_name} ==========")
