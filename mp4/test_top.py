@@ -28,8 +28,8 @@ async def test_cpu(dut):
     for j in range(line*5):
         await ClockCycles(dut.clk, 1)
 
-        #if j in range((line - 1) * 5, line * 5):
-        if j <= (line*5 - 1):
+        #if j in range((line - 1) * 5, line * 5): # prints the output of that specific line
+        if j <= (line*5 - 1): # prints the output of everything up until that command
 
             # ----- REGISTER FILE PRINTS -----
             for i in range(32):
@@ -106,7 +106,6 @@ async def test_cpu(dut):
                 print(f"dmem_address: {hex(dut.dmem_address.value)}")
             except:
                 print(f"dmem_address: {dut.dmem_address.value}")
-
 
             # imem address
             try:

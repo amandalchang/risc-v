@@ -1,7 +1,7 @@
 `include "memory.sv"
 `include "immextend.sv"
 `include "register_file.sv"
-`include "control.sv"
+`include "control_module/control.sv"
 `include "alu.sv"
 
 module top (
@@ -50,7 +50,7 @@ module top (
     logic reg_write;
 
     memory #(
-        .IMEM_INIT_FILE_PREFIX  ("rv32i_test")
+        .IMEM_INIT_FILE_PREFIX  ("assembly_test/rv32i_test")
     ) memory (
         .clk            (clk), 
         .funct3         (store_instr[14:12]), 

@@ -1,8 +1,8 @@
 // Control Unit
 // given the op code, funct3, and funct7, outputs control signals to the rest of the processor
 
-`include "alu_decoder.sv"
-`include "instr_decoder.sv"
+`include "control_module/alu_decoder.sv"
+`include "control_module/instr_decoder.sv"
 
 
 module control(

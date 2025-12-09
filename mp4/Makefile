@@ -5,8 +5,8 @@
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
 
-# Always force a rebuild of the simulation binary
-SIM_BUILD := sim_build_$(shell date +%s)
+# put all build files into build/
+SIM_BUILD = build
 
 VERILOG_SOURCES += top.sv
 # use VHDL_SOURCES for VHDL files
