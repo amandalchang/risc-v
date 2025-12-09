@@ -42,22 +42,16 @@ module control(
     localparam [2:0] MEMORY = 3'b011;
     localparam [2:0] WRITE_BACK = 3'b100;
 
-    // execute opcodes
+    // opcodes
     localparam [6:0] LOAD = 7'b0000011;
     localparam [6:0] STORE = 7'b0100011;
     localparam [6:0] EXECUTE_R = 7'b0110011;
     localparam [6:0] EXECUTE_I = 7'b0010011;
     localparam [6:0] JAL = 7'b1101111;
+    localparam [6:0] JALR = 7'b1100111;
     localparam [6:0] BRANCH = 7'b1100011;
     localparam [6:0] EXECUTE_LUI = 7'b0110111;
     localparam [6:0] EXECUTE_AUIPC = 7'b0010111;
-
-    // memory opcodes
-    localparam [6:0] MEMREAD = 7'b0000011;
-    localparam [6:0] MEMWRITE = 7'b0100011;
-
-    // writeback opcode
-    localparam [6:0] MEMWB = MEMREAD;
     
     // alu_src_a and alu_src_b localparams
     localparam [1:0] A_SELECT_PC = 2'b00;
@@ -135,13 +129,7 @@ module control(
             end
             EXECUTE: begin
                 case(opcode)
-                    LOAD: begin
-                        // state logic
-                        alu_src_a = A_SELECT_RD1;
-                        alu_src_b = B_SELECT_IMM_EXT;
-                        alu_op = ADD;
-                    end
-                    STORE: begin
+                    LOAD, STORE: begin
                         alu_src_a = A_SELECT_RD1;
                         alu_src_b = B_SELECT_IMM_EXT;
                         alu_op = ADD;
@@ -166,6 +154,13 @@ module control(
                         alu_op = ADD;
                         result_src = 2'b00;
                         pc_update = 1'b1;
+                    end
+                    JALR: begin
+                        alu_src_a = A_SELECT_OLD_PC;
+                        alu_src_b = B_SELECT_4;
+                        alu_op = ADD;
+                        result_src = 2'b10;
+                        reg_write = 1'b1;
                     end
                     BRANCH: begin
                         // state logic
@@ -194,11 +189,11 @@ module control(
             end
             MEMORY: begin
                 case(opcode)
-                    MEMREAD: begin
+                    LOAD: begin
                         result_src = 2'b00;
                         adr_src = 1'b1;
                     end
-                    MEMWRITE: begin
+                    STORE: begin
                         result_src = 2'b00;
                         adr_src = 1'b1;
                         mem_write = 1'b1;
@@ -207,20 +202,28 @@ module control(
                         result_src = 2'b00;
                         reg_write = 1'b1;
                     end
+                    JALR: begin
+                        alu_src_a = A_SELECT_RD1;
+                        alu_src_b = B_SELECT_IMM_EXT;
+                        alu_op = ADD;
+                        result_src = 2'b10;
+                        pc_update = 1'b1;
+                    end
                     STORE: begin
                         result_src = 2'b00;
                         adr_src = 1'b1;
                         mem_write = 1'b1;
                     end
                     default: begin
-                        // Do nothing; includes LOAD
+                        // Do nothing
                     end
                 endcase
             end
             WRITE_BACK: begin
-                if (opcode == MEMWB) begin
+                if (opcode == LOAD) begin
                     result_src = 2'b01;
                     reg_write = 1'b1;
+                    adr_src = 1'b0;
                 end
             end
         endcase
