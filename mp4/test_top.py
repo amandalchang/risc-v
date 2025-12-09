@@ -23,13 +23,13 @@ async def test_cpu(dut):
         dut.memory.dmem3.memory.value,
     ]
     pc = dut.pc
-    line = 18
-    for j in range(350):
+    # line 59 is beq x15 branch true (first time the comparison is 0)
+    line = 61 # x15 = 0x8 line 33, right before jal second run
+    for j in range(line*5):
         await ClockCycles(dut.clk, 1)
 
         #if j in range((line - 1) * 5, line * 5):
         if j <= (line*5 - 1):
-            
 
             # ----- REGISTER FILE PRINTS -----
             for i in range(32):
@@ -77,7 +77,7 @@ async def test_cpu(dut):
                 print(f"alu result: {dut.alu_result.value}")
 
             print(f"result src: {dut.control.result_src.value}")
-            print(f"pc write: {dut.control.pc_write.value}")
+            print(f"pc write: {dut.control.pc_write.value}\n")
 
             # pc
             try:
@@ -93,9 +93,9 @@ async def test_cpu(dut):
 
             # pc next
             try:
-                print(f"{hex(dut.pc_next.value)} pc next")
+                print(f"{hex(dut.pc_next.value)} pc next\n")
             except:
-                print(f"{dut.pc_next.value} pc next")
+                print(f"{dut.pc_next.value} pc next\n")
 
             # dmem address
             try:
@@ -115,7 +115,13 @@ async def test_cpu(dut):
                 print(f"imem data out: {hex(dut.imem_data_out.value)}")
             except:
                 print(f"imem data out: {dut.imem_data_out.value}")
-            
+
+            # store instr
+            try:
+                print(f"store instr: {hex(dut.store_instr.value)}")
+            except:
+                print(f"store instr: {dut.store_instr.value}")
+
             # rd2 data
             try:
                 print(f"rd2data: {hex(dut.rd2_data.value)}")
@@ -133,13 +139,6 @@ async def test_cpu(dut):
                 print(f"dmem data out: {hex(dut.dmem_data_out.value)}")
             except:
                 print(f"dmem data out: {dut.dmem_data_out.value}")
-
-            # store instr
-            try:
-                print(f"store instr: {hex(dut.store_instr.value)}")
-            except:
-                print(f"store instr: {dut.store_instr.value}")
-
 
             print(f"reg write: {dut.reg_write.value}")
 
