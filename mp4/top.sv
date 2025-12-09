@@ -53,7 +53,7 @@ module top (
         .IMEM_INIT_FILE_PREFIX  ("rv32i_test")
     ) memory (
         .clk            (clk), 
-        .funct3         (funct3), 
+        .funct3         (store_instr[14:12]), 
         .dmem_wren      (mem_write), 
         .dmem_address   (dmem_address), 
         .dmem_data_in   (rd2_data), 
@@ -154,8 +154,7 @@ module top (
         // data memory uses ALU result when adr_src = 1
         if (adr_src)
             dmem_address <= result;
-        else
-            dmem_address <= pc;
+
     end
 
 

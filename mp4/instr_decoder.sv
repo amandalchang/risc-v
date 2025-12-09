@@ -29,6 +29,7 @@ module instruction_decoder(
 );
     localparam [6:0] ITYPEA = 7'b0010011;
     localparam [6:0] ITYPEL = 7'b0000011;
+    localparam [6:0] JALR = 7'b1100111;
     localparam [6:0] STYPE  = 7'b0100011;
     localparam [6:0] BTYPE  = 7'b1100011;
     localparam [6:0] JTYPE  = 7'b1101111;
@@ -38,8 +39,7 @@ module instruction_decoder(
 
     always_comb begin
       case (op) // read the opcode
-        ITYPEA: imm_src = 3'b000;
-        ITYPEL: imm_src = 3'b000;
+        ITYPEA, ITYPEL, JALR: imm_src = 3'b000;
         STYPE:  imm_src = 3'b001;
         BTYPE:  imm_src = 3'b010;
         JTYPE:  imm_src = 3'b011;
