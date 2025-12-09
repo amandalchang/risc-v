@@ -11,7 +11,7 @@ STATE_NAMES = {
 }
 
 @cocotb.test()
-async def test_cpu(dut, line=62, up_to_line=True, verbose=True):
+async def test_cpu(dut, line=21, up_to_line=False, verbose=True):
     """Run CPU and print registers/signals.
 
     Args:

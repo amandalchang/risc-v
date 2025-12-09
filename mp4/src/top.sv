@@ -1,8 +1,8 @@
-`include "memory.sv"
-`include "immextend.sv"
-`include "register_file.sv"
-`include "control_module/control.sv"
-`include "alu.sv"
+`include "./src/memory.sv"
+`include "./src/immextend.sv"
+`include "./src/register_file.sv"
+`include "./src/control_module/control.sv"
+`include "./src/alu.sv"
 
 module top (
     input logic clk, 

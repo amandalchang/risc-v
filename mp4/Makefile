@@ -9,7 +9,7 @@ SIM_BUILD = build
 # Redirect Python __pycache__ into build/
 export PYTHONPYCACHEPREFIX := $(SIM_BUILD)/__pycache__
 
-VERILOG_SOURCES += src/top.sv
+VERILOG_SOURCES += ./src/top.sv
 
 # COCOTB_TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 COCOTB_TOPLEVEL = top
