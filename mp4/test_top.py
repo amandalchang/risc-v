@@ -1,157 +1,112 @@
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, Timer
-import random
+
+STATE_NAMES = {
+    0b000: "FETCH",
+    0b001: "DECODE",
+    0b010: "EXECUTE",
+    0b011: "MEMORY",
+    0b100: "WRITEBACK"
+}
 
 @cocotb.test()
-async def test_cpu(dut):
-    """Run CPU and print registers every cycle."""
+async def test_cpu(dut, line=62, up_to_line=True, verbose=True):
+    """Run CPU and print registers/signals.
 
+    Args:
+        dut: the top-level DUT
+        line (int): the line number to observe
+        up_to_line (bool): if True, print every cycle up to the line; if False, print only that line
+        verbose (bool): if True, print detailed signals
+    """
+
+    # ------ Setup clock ------
     dut.clk.value = 0
-    await Timer(83.3, unit="ns")
-    clock = Clock(dut.clk, 100, unit="ns")
-    cocotb.start_soon(clock.start())
+    await Timer(83.3, unit="ns")  # initial delay
+    cocotb.start_soon(Clock(dut.clk, 100, unit="ns").start())
+
     regfile = dut.register_file.reg_data
-    
-    pc_enable = dut.pc_write
-    x1 = regfile[1]
-    x2 = regfile[2]
-    dmem = [
-        dut.memory.dmem0.memory.value,
-        dut.memory.dmem1.memory.value,
-        dut.memory.dmem2.memory.value,
-        dut.memory.dmem3.memory.value,
-    ]
-    pc = dut.pc
-    # line 59 is beq x15 branch true (first time the comparison is 0)
-    line = 62 # x15 = 0x8 line 33, right before jal second run
-    for j in range(line*5):
+    cycles_to_run = line * 5
+
+    def try_hex(val):
+        try:
+            return hex(val.value)
+        except Exception:
+            return val.value
+
+    for j in range(cycles_to_run):
         await ClockCycles(dut.clk, 1)
 
-        #if j in range((line - 1) * 5, line * 5): # prints the output of that specific line
-        if j <= (line*5 - 1): # prints the output of everything up until that command
+        should_print = up_to_line or (j == cycles_to_run - 1)
+        if not should_print:
+            continue
 
-            # ----- REGISTER FILE PRINTS -----
-            for i in range(32):
-                try:
-                    print(f"Register {i}: {hex(regfile.value[i])}")
-                except:
-                    print(f"Register {i}: {regfile.value[i]}")
+        state_val = int(dut.control.current_state.value)
+        state_name = STATE_NAMES.get(state_val, "UNKNOWN")
+        print(f"\n\n=========== FSM: {state_name} ==========")
+        # ------ Register file always printed ------
+        print(f"\n------ Cycle {j} ------")
+        for i in range(32):
+            try:
+                print(f"Register {i}: {hex(regfile.value[i])}")
+            except Exception:
+                print(f"Register {i}: {regfile.value[i]}")
 
-            print(f"zero: {dut.zero}")
-            print(f"carry {dut.carry}")
-            print(f"negative {dut.negative}")
-            print(f"overflow: {dut.overflow}")
-            # alu src a
+        # ------ Optional verbose prints ------
+        if verbose: 
+            print(f"\n------ Mux Selects ------")
+            print(f"adr_src: {dut.control.adr_src.value}")
+            print(f"result src: {dut.control.result_src.value}") 
+
+            print(f"\n------ PC Signals & Vals ------")
+            print(f"pc write: {dut.control.pc_write.value}")
+            print(f"pc: {try_hex(dut.pc)}")
+            print(f"old pc: {try_hex(dut.old_pc)}")
+            print(f"pc next: {try_hex(dut.pc_next)}") 
+
+            print(f"\n------ IMEM/DMEM ------")            
+            print(f"ir_write: {dut.control.ir_write.value}")
+            print(f"mem write: {dut.mem_write.value}")                
+            print(f"imem_address: {try_hex(dut.imem_address)}")            
+            print(f"dmem_address: {try_hex(dut.dmem_address)}")
+            print(f"imem/dmem WD: {try_hex(dut.rd2_data)}")
+            print(f"imem data out: {try_hex(dut.imem_data_out)}")
+            print(f"store instr: {try_hex(dut.store_instr)}")
+            print(f"dmem data out: {try_hex(dut.dmem_data_out)}") 
+            
+            print(f"\n------ ALU Signals & Vals ------")            
+            print(f"alu op: {dut.control.ALU_decoder.alu_op.value}")            
+            print(f"alu result wide: {dut.alu.wide_result.value}")
+            print(f"alu result: {try_hex(dut.alu_result)}")
+            print(f"alu control: {dut.alu.alu_control.value}")            
             print(f"alu src a: {dut.control.alu_src_a.value}")
             print(f"alu src b: {dut.control.alu_src_b.value}")
-            print(f"branch: {dut.control.branch.value}")
-
-            print(f"mem write: {dut.mem_write.value}")
-
-            # src a (hex if possible)
-            try:
-                print(f"src a: {hex(dut.src_a.value)}")
-            except:
-                print(f"src a: {dut.src_a.value}")
-
-            # src b (hex if possible)
-            try:
-                print(f"src b: {hex(dut.src_b.value)}")
-            except:
-                print(f"src b: {dut.src_b.value}")
-
+            print(f"src a: {try_hex(dut.src_a)}")
+            print(f"src b: {try_hex(dut.src_b)}")
+          
+            print(f"\n------ Immediate Extend ------")
             print(f"imm_src: {dut.imm_src.value}")
+            print(f"imm ext: {try_hex(dut.imm_ext)}")            
+
+            print(f"\n------ Reg File ------")
+            print(f"reg write: {dut.reg_write.value}")  
+            print(f"rd: {dut.register_file.a3.value}")   
+            print(f"result (WD3): {try_hex(dut.result)}")
+
+            print(f"\n------ Branch Flags ------")
+            print(f"branch: {dut.control.branch.value}")
+            print(f"zero: {dut.zero}")
+            print(f"carry: {dut.carry}")
+            print(f"negative: {dut.negative}")
+            print(f"overflow: {dut.overflow}")
             
-            try:
-                print(f"imm ext: {hex(dut.imm_ext.value)}")
-            except:
-                print(f"imm ext: {dut.imm_ext.value}")
-            
-            print(f"adr_src: {dut.control.adr_src.value}")
-            print(f"ir_write: {dut.control.ir_write.value}")
-            print(f"alu op: {dut.control.ALU_decoder.alu_op.value}")
-            print(f"alu control: {dut.alu.alu_control.value}")
-            print(f"alu result wide: {dut.alu.wide_result.value}")
-
-            # alu result
-            try:
-                print(f"alu result: {hex(dut.alu_result.value)}")
-            except:
-                print(f"alu result: {dut.alu_result.value}")
-
-            print(f"result src: {dut.control.result_src.value}")
-            print(f"pc write: {dut.control.pc_write.value}\n")
-
-            # pc
-            try:
-                print(f"{hex(dut.pc.value)} pc")
-            except:
-                print(f"{dut.pc.value} pc")
-
-            # old pc
-            try:
-                print(f"{hex(dut.old_pc.value)} old pc")
-            except:
-                print(f"{dut.old_pc.value} old pc")
-
-            # pc next
-            try:
-                print(f"{hex(dut.pc_next.value)} pc next\n")
-            except:
-                print(f"{dut.pc_next.value} pc next\n")
-
-            # dmem address
-            try:
-                print(f"dmem_address: {hex(dut.dmem_address.value)}")
-            except:
-                print(f"dmem_address: {dut.dmem_address.value}")
-
-            # imem address
-            try:
-                print(f"imem_address: {hex(dut.imem_address.value)}")
-            except:
-                print(f"imem_address: {dut.imem_address.value}")
-
-            # imem data out
-            try:
-                print(f"imem data out: {hex(dut.imem_data_out.value)}")
-            except:
-                print(f"imem data out: {dut.imem_data_out.value}")
-
-            # store instr
-            try:
-                print(f"store instr: {hex(dut.store_instr.value)}")
-            except:
-                print(f"store instr: {dut.store_instr.value}")
-
-            # rd2 data
-            try:
-                print(f"rd2data: {hex(dut.rd2_data.value)}")
-            except:
-                print(f"rd2data: {dut.rd2_data.value}")
-            
-            # dmem data out
-            try:
-                print(f"dmem data out: {hex(dut.dmem_data_out.value)}")
-            except:
-                print(f"dmem data out: {dut.dmem_data_out.value}")
-
-            print(f"reg write: {dut.reg_write.value}")
-
-            # result (WD3)
-            try:
-                print(f"result (aka WD3): {hex(dut.result.value)}")
-            except:
-                print(f"result (aka WD3): {dut.result.value}")
-
-            print(f"Rd: {dut.register_file.a3.value}")
-            print(f"FSM state: {dut.control.current_state.value}")\
-            
+            print(f"\n------ DMEM Last Word ------")
+            # Print the last four bytes of dmem for store/load testing
             dmem_ffc = [
-                dut.memory.dmem0.memory[0b1111111111].value,
-                dut.memory.dmem1.memory[0b1111111111].value,
-                dut.memory.dmem2.memory[0b1111111111].value,
-                dut.memory.dmem3.memory[0b1111111111].value,
+                try_hex(dut.memory.dmem0.memory[0b1111111111]),
+                try_hex(dut.memory.dmem1.memory[0b1111111111]),
+                try_hex(dut.memory.dmem2.memory[0b1111111111]),
+                try_hex(dut.memory.dmem3.memory[0b1111111111]),
             ]
-            print(f"data memory: {dmem_ffc}\n\n")
+            print(f"data memory 0xffc: {dmem_ffc}\n")
