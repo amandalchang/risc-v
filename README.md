@@ -1,1 +1,2 @@
-# risc-v
+# RISC-V
+This is a full implementation of the RISC-V structure described in the book Digital Design and Computer Architecture, RISC-V Edition by Harris & Harris in System Verilog. We implemented all instruction types aside from ecall, ebreak, csrrw, csrrs, csrrc, csrrwi, csrrsi, and csrrci. It was verified by a test file of assembly instructions, which is converted into machine code and split into four files by the Python script. The resulting memory is printed to the terminal. The number of clock cycles provided to the cocotb simultor determine how many instructions the program will execute. 
